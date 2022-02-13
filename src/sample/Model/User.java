@@ -5,11 +5,11 @@ public class User {
     private String userName;
     private String password;
 //ID?
-    private int id;
+    private int userId;
 
-    public User (int id, String userName, String password){
+    public User (int userId, String userName, String password){
 
-        this.id = id;
+        this.userId = userId;
         this.userName = userName;
         this.password = password;
     }
@@ -30,11 +30,11 @@ public class User {
         this.password = password;
     }
 
-    public int getId() {
-        return id;
+    public int getUserId() {
+        return userId;
     }
 
-    public void setId(int id) {
-        this.id = id;
+    public void setUserId(int userId) {
+        this.userId = userId;
     }
 }

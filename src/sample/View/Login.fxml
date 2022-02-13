@@ -10,7 +10,7 @@
       <HBox layoutX="65.0" layoutY="52.0" prefHeight="295.0" prefWidth="77.0" />
       <VBox layoutX="143.0" layoutY="44.0" prefHeight="112.0" prefWidth="254.0" spacing="5.0">
          <children>
-            <Label prefHeight="41.0" prefWidth="78.0" text="Username">
+            <Label fx:id="UsernameLabel" prefHeight="33.0" prefWidth="136.0" text="Username">
                <font>
                   <Font size="14.0" />
                </font>
@@ -23,7 +23,7 @@
       </VBox>
       <VBox layoutX="145.0" layoutY="168.0" prefHeight="120.0" prefWidth="254.0" spacing="6.0">
          <children>
-            <Label prefHeight="41.0" prefWidth="78.0" text="Password">
+            <Label fx:id="PasswordLabel" prefHeight="42.0" prefWidth="246.0" text="Password">
                <font>
                   <Font size="14.0" />
                </font>
@@ -40,5 +40,6 @@
             </Button>
          </children>
       </VBox>
+      <Label fx:id="locationLabel" layoutX="51.0" layoutY="330.0" prefHeight="26.0" prefWidth="194.0" text="Label" />
    </children>
 </AnchorPane>
