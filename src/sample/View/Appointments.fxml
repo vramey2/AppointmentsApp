@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+<AnchorPane prefHeight="400.0" prefWidth="1090.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.Controller.AppointmentsController">
+   <children>
+      <VBox prefHeight="370.0" prefWidth="972.0">
+         <opaqueInsets>
+            <Insets />
+         </opaqueInsets>
+         <padding>
+            <Insets bottom="50.0" left="10.0" right="20.0" top="10.0" />
+         </padding>
+         <children>
+            <HBox prefHeight="100.0" prefWidth="200.0">
+               <children>
+                  <Label prefHeight="18.0" prefWidth="109.0" text="Appointments">
+                     <font>
+                        <Font name="System Bold" size="14.0" />
+                     </font>
+                  </Label>
+               </children>
+               </HBox>
+            <TableView fx:id="appointmentsTable" prefHeight="200.0" prefWidth="907.0">
+              <columns>
+                  <TableColumn fx:id="appointment_ID" prefWidth="30.40000855922699" text="ID" />
+                  <TableColumn fx:id="titleColumn" prefWidth="91.19998550415039" text="Title" />
+                  <TableColumn fx:id="descriptionColumn" prefWidth="81.00000762939453" text="Description" />
+                  <TableColumn fx:id="locationColumn" prefWidth="113.19999694824219" text="Location" />
+                  <TableColumn fx:id="contactColumn" prefWidth="62.0" text="Contact" />
+                  <TableColumn fx:id="typeColumn" prefWidth="125.20001220703125" text="Type" />
+                <TableColumn fx:id="startColumn" prefWidth="149.99996948242188" text="State Date and Time" />
+                <TableColumn fx:id="endColumn" prefWidth="129.0" text="End Date and Time" />
+                  <TableColumn fx:id="customerIdColumn" prefWidth="81.79998779296875" text="Customer_ID" />
+                  <TableColumn fx:id="userIdColumn" prefWidth="56.800048828125" text="User_ID" />
+              </columns>
+            </TableView>
+         </children></VBox>
+   </children>
+</AnchorPane>

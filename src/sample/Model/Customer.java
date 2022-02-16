@@ -18,7 +18,7 @@ public class Customer
     private String customerAddress;
 
     /**Customer's postal code */
-    private int zipCode;
+    private String zipCode;
 
     /**Customer's phone number */
     private String phoneNumber;
@@ -29,7 +29,7 @@ public class Customer
      *
      *
      */
-    public Customer (int customerId, String customerName, String customerAddress, int zipCode, String phoneNumber){
+    public Customer (int customerId, String customerName, String customerAddress, String zipCode, String phoneNumber){
         this.customerId = customerId;
         this.customerName = customerName;
         this.customerAddress = customerAddress;
@@ -63,11 +63,11 @@ public class Customer
         this.customerAddress = customerAddress;
     }
 
-    public int getZipCode() {
+    public String getZipCode() {
         return zipCode;
     }
 
-    public void setZipCode(int zipCode) {
+    public void setZipCode(String zipCode) {
         this.zipCode = zipCode;
     }
 

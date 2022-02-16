@@ -39,7 +39,7 @@ public class LoginController implements Initializable  {
         System.out.println ("Initialized!");
        locationLabel.setText("Your location: " + ZoneId.systemDefault());
         System.out.println("Your location: " + ZoneId.systemDefault());
-        Locale.setDefault(new Locale("fr"));
+     //   Locale.setDefault(new Locale("fr"));
         ResourceBundle rb = ResourceBundle.getBundle("sample/translt", Locale.getDefault());
 //        locationLabel.setText(ZoneId.systemDefault().toString());
     if(Locale.getDefault().getLanguage().equals("fr")){

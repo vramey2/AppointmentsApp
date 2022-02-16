@@ -1,14 +1,50 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import java.lang.*?>
-<?import java.util.*?>
-<?import javafx.scene.*?>
+<?import javafx.geometry.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
 
-<AnchorPane xmlns="http://javafx.com/javafx"
-            xmlns:fx="http://javafx.com/fxml"
-            fx:controller="sample.Controller.CustomersController"
-            prefHeight="400.0" prefWidth="600.0">
-
+<AnchorPane prefHeight="400.0" prefWidth="1032.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.Controller.CustomersController">
+   <children>
+      <VBox layoutX="-11.0" prefHeight="370.0" prefWidth="818.0">
+         <children>
+            <HBox prefHeight="100.0" prefWidth="200.0">
+               <children>
+                  <Label prefHeight="18.0" prefWidth="109.0" text="Customers">
+                     <font>
+                        <Font name="System Bold" size="14.0" />
+                     </font>
+                  </Label>
+                  <VBox alignment="TOP_RIGHT" prefHeight="74.0" prefWidth="644.0">
+                     <children>
+                        <Button mnemonicParsing="false" onAction="#appointmentsButtonClicked" text="View Appointments" />
+                     </children>
+                  </VBox>
+               </children>
+               <VBox.margin>
+                  <Insets bottom="30.0" />
+               </VBox.margin>
+            </HBox>
+            <TableView fx:id="TableCustomers" prefHeight="222.0" prefWidth="698.0">
+              <columns>
+                <TableColumn fx:id="Customer_ID" prefWidth="75.0" text="ID" />
+                <TableColumn fx:id="Customer_Name" prefWidth="142.8000030517578" text="Name" />
+                <TableColumn fx:id="Address" prefWidth="240.39996337890625" text="Location" />
+                <TableColumn fx:id="Postal_Code" prefWidth="130.0" text="Zip Code" />
+                  <TableColumn fx:id="Phone" prefWidth="160.4000244140625" text="Phone" />
+              </columns>
+               <padding>
+                  <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+               </padding>
+            </TableView>
+         </children>
+         <padding>
+            <Insets bottom="50.0" left="20.0" right="20.0" top="20.0" />
+         </padding>
+         <opaqueInsets>
+            <Insets left="50.0" top="20.0" />
+         </opaqueInsets>
+      </VBox>
+   </children>
 </AnchorPane>
