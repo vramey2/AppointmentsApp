@@ -26,6 +26,8 @@ public class Query {
 
     }
 
+
+
     public static ObservableList selectAppointments() throws SQLException {
         ObservableList<Appointment> appointments = FXCollections.observableArrayList();
         String sql = "SELECT Appointment_ID, Title, Description, Location, Type, Contact_ID, Start, End, Customer_ID, User_ID from  APPOINTMENTS";
@@ -53,5 +55,43 @@ public class Query {
 
 
     }
+    public static ObservableList <String> loadDivisions(int Country_ID) throws SQLException
+
+    {
+
+    {
+
+        System.out.println ("Inside loaddivisions");
+        ObservableList<String> selectDivisionList = FXCollections.observableArrayList();
+        try {
+            JDBC.openConnection();
+
+            String sql = " SELECT Division FROM first_level_divisions WHERE Country_ID = ?";
+            PreparedStatement ps = JDBC.connection.prepareStatement(sql);
+            ps.setInt(1, Country_ID);
+            ResultSet resultSet = ps.executeQuery();
+
+            //CREATE CUSTOMER OBJECT FROM EACH RECORD
+            while (resultSet.next()) {
+                System.out.println ("Inside while of loaddivisions");
+                String division = resultSet.getString("Division");
+                selectDivisionList.add(division);
+
+                // selectDivisionList.add(resultSet.getString("Division"));
+                System.out.println (division);
+            }
+        } catch (Exception e) {//
+        }
+        return selectDivisionList;
     }
+
+
+/**
+    public ArrayList <Division> getInfo(String Country){
+
+
+    }*/
+    }}
+
+
 
