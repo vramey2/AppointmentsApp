@@ -5,11 +5,11 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
 
-<AnchorPane prefHeight="400.0" prefWidth="1032.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.Controller.CustomersController">
+<AnchorPane prefHeight="400.0" prefWidth="1100.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.Controller.CustomersController">
    <children>
-      <VBox layoutX="-11.0" prefHeight="370.0" prefWidth="818.0">
+      <VBox layoutX="14.0" prefHeight="370.0" prefWidth="1133.0">
          <children>
-            <HBox prefHeight="100.0" prefWidth="200.0">
+            <HBox layoutX="50.0" layoutY="100.0" prefHeight="100.0" prefWidth="200.0">
                <children>
                   <Label prefHeight="18.0" prefWidth="109.0" text="Customers">
                      <font>
@@ -26,13 +26,16 @@
                   <Insets bottom="30.0" />
                </VBox.margin>
             </HBox>
-            <TableView fx:id="TableCustomers" prefHeight="222.0" prefWidth="698.0">
+            <TableView fx:id="TableCustomers" prefHeight="183.0" prefWidth="1215.0">
               <columns>
                 <TableColumn fx:id="Customer_ID" prefWidth="75.0" text="ID" />
                 <TableColumn fx:id="Customer_Name" prefWidth="142.8000030517578" text="Name" />
                 <TableColumn fx:id="Address" prefWidth="240.39996337890625" text="Location" />
                 <TableColumn fx:id="Postal_Code" prefWidth="130.0" text="Zip Code" />
                   <TableColumn fx:id="Phone" prefWidth="160.4000244140625" text="Phone" />
+                  <TableColumn fx:id="CountryColumn" prefWidth="160.4000244140625" text="Country" />
+                  <TableColumn fx:id="DivisionColumn" prefWidth="160.4000244140625" text="Division " />
+
               </columns>
                <padding>
                   <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />

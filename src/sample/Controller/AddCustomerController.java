@@ -76,15 +76,36 @@ public class AddCustomerController implements Initializable {
 
         }
     }
-    public void saveButtonPushed(ActionEvent event) {
+    public void saveButtonPushed(ActionEvent event) throws SQLException, IOException {
 
         String customerName = customerNameTextField.getText();
         String customerAddress = customerAddressTextfield.getText();
         String zipCode = postalCodeTextfield.getText();
         String phoneNumber = phoneNumberTextfield.getText();
+    //    String country = selectCountryCombobox.getAccessibleText();
+        String division = (String) selectDivisionCombobox.getValue();
+      //  int divisionId = Query.DivisionID(division);
 
-     //   Customer newCustomer = new Customer(CustomerId, customerName, customerAddress, zipCode, phoneNumber)
+
+      int rowsAffected =  Query.insertCustomer(customerName, customerAddress, zipCode, phoneNumber, Query.DivisionID(division));
+if (rowsAffected >0){
+    Alert alert = new Alert (Alert.AlertType.INFORMATION);
+    alert.setContentText("Customer Added!");
+
+     alert.showAndWait();
+
+        Stage stage = (Stage) ((Button) event.getSource()).getScene().getWindow();
+        Object scene = FXMLLoader.load(getClass().getResource("/sample/View/Customers.fxml"));
+        stage.setScene(new Scene((Parent) scene));
+        stage.show();
     }
+
+
+
+}
+
+    // Customer newCustomer = new Customer(customerName, customerAddress, zipCode, phoneNumber, division, country, divisionId);
+
 
     public void cancelButtonPushed(ActionEvent event) throws IOException {
 

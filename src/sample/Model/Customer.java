@@ -23,22 +23,52 @@ public class Customer
     /**Customer's phone number */
     private String phoneNumber;
 
+    /**Customer's country */
+     private String country;
+
+     /**Customer's Division */
+     private String division;
+
+     /**Customer's Division ID*/
+     private int divisionId;
+
+
 //private int divisionID ?
 
     /**Method creates customer instance.
      *
      *
      */
-    public Customer (int customerId, String customerName, String customerAddress, String zipCode, String phoneNumber){
+    public Customer (int customerId, String customerName, String customerAddress, String zipCode, String phoneNumber, String country, String division, int divisionId){
         this.customerId = customerId;
         this.customerName = customerName;
         this.customerAddress = customerAddress;
         this.zipCode = zipCode;
         this.phoneNumber = phoneNumber;
+        this.division = division;
+        this.country = country;
+        this.divisionId = divisionId;
 
     }
 
+public int getDivisionId(){return divisionId;}
 
+    public void setDivisionId (int divisionId){
+        this.divisionId = divisionId;
+    }
+
+    public String getDivision(){return division;}
+
+    public void setDivision(String division) {
+        this.division = division;
+    }
+
+    public String getCountry(){return country; }
+
+    public void setCountry(String country){
+
+        this.country = country;
+    }
     public int getCustomerId() {
         return customerId;
     }

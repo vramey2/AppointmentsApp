@@ -13,8 +13,10 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.Stage;
+import sample.Model.Appointment;
 import sample.Model.Customer;
 import sample.helper.JDBC;
+import sample.helper.Query;
 
 import java.io.IOException;
 import java.net.URL;
@@ -33,107 +35,31 @@ public class CustomersController implements Initializable {
     public TableColumn <Customer, String> Postal_Code;
     public TableColumn <Customer, String> Phone;
     public Button addButton;
+    public TableColumn <Customer, String> CountryColumn;
+    public TableColumn <Customer, String> DivisionColumn;
     private Object Button;
+    private int Division_ID;
 
 
     //To load from the database
-
     public void loadCustomers() throws SQLException {
         ObservableList<Customer> customers = FXCollections.observableArrayList();
-
-        /**Connection connection = null;
-         Statement statement = null;
-         ResultSet resultSet = null;*/
-
         try {
             JDBC.openConnection();
-            // assert false;
-            String sql = " SELECT Customer_ID, Customer_Name, Address, Postal_Code, Phone FROM CUSTOMERS";
-            PreparedStatement ps = JDBC.connection.prepareStatement(sql);
-            ResultSet resultSet = ps.executeQuery();
-            //  Statement statement = JDBC.connection connection.createStatement();
 
-            // resultSet = statement.executeQuery("SELECT * FROM CUSTOMERS");
+            customers = Query.selectCustomers();
 
-            //CREATE CUSTOMER OBJECT FROM EACH RECORD
-            while (resultSet.next()){
+        } catch (Exception e) {
 
-                int customerID = resultSet.getInt("Customer_ID");
-                String customerName = resultSet.getString("Customer_Name");
-                String customerAddress = resultSet.getString ("Address");
-                String zipCode = resultSet.getString ("Postal_Code");
-                String phoneNumber = resultSet.getString ("Phone");
-
-                Customer newCustomer = new Customer (customerID, customerName, customerAddress, zipCode, phoneNumber);
-                customers.add (newCustomer);
-
-/**
- Customer newCustomer = new Customer(resultSet.getInt ("Customer_ID"), resultSet.getString ("Customer_Name"),
- resultSet.getString("Address"), resultSet.getInt("Postal_Code"), resultSet.getString("Phone"));
- customers.add(newCustomer);
- System.out.println(newCustomer);*/
-                System.out.println (customerID + customerName + customerAddress + zipCode + phoneNumber);
-                System.out.println ("");
-                System.out.println ("in the while");
-            }
-            TableCustomers.getItems().addAll(customers);
-
+            System.err.println(e.getMessage());
         }
-        catch (Exception e){
+        TableCustomers.getItems().addAll(customers);
 
-            System.err.println (e.getMessage());
-        }
 
-        /**  finally{
-         if (connection!=null)
-         JDBC.closeConnection();
-         if (statement !=null)
-         statement.close();
-         if (resultSet != null)
-         resultSet.close();
-*/}
+    }
 
          @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-
-/**        ZoneId myZoneID = ZoneId.systemDefault();
-             ZonedDateTime myZDT = ZonedDateTime.of(myLDT, myZoneID);
-        System.out.println (myLDT);
-
-        //convert to utc
-             ZoneId utcZoneID = ZoneId.of("UTC");
-             ZonedDateTime utcZDT = ZonedDateTime.ofInstant(myZDT.toInstant(), utcZoneID);
-
-             try {
-                 JDBC.openConnection();
-                 String sql = "SELECT Start, End from Appointments WHERE Start BETWEEN ? AND ? ";
-                 PreparedStatement ps = JDBC.connection.prepareStatement(sql);
-                 ps.setObject(1, utcZDT);
-                 ps.setObject(2, utcZDT.plusMinutes(15));
-                 ResultSet resultSet = ps.executeQuery();
-                 Alert alert = new Alert(Alert.AlertType.ERROR);
-
-                 //CREATE CUSTOMER OBJECT FROM EACH RECORD
-                if  (resultSet.next()) {
-                     int appointmentID = resultSet.getInt("Appointment_ID");
-                     Timestamp start = resultSet.getTimestamp("Start");
-                     Timestamp end = resultSet.getTimestamp("End");
-
-                    alert.setHeaderText("You have upcoming appointment! Appointment ID: " + appointmentID + " starting " + start + " and ending " + end);
-                    alert.showAndWait();
-
-
-                 }
-                else {
-                     alert.setHeaderText ("You don't have upcoming appointments!");
-                     System.out.println ("In the else");
-                }
-             }
-            catch (Exception e){
-
-                 System.err.println (e.getMessage());
-             }
-*/
 
         //columns configuration
         Customer_ID.setCellValueFactory(new PropertyValueFactory<Customer, Integer>("customerId"));
@@ -141,6 +67,9 @@ public class CustomersController implements Initializable {
         Address.setCellValueFactory(new PropertyValueFactory<Customer, String>("customerAddress"));
         Postal_Code.setCellValueFactory(new PropertyValueFactory <Customer, String> ("zipCode"));
         Phone.setCellValueFactory(new PropertyValueFactory<Customer, String>("phoneNumber"));
+        CountryColumn.setCellValueFactory(new PropertyValueFactory<Customer, String>("country"));
+        DivisionColumn.setCellValueFactory(new PropertyValueFactory<Customer, String>("division"));
+       // DivisionIDColumn.setCellValueFactory(new PropertyValueFactory<Customer, Integer>("divisionId"));
 
         try{
             loadCustomers();
