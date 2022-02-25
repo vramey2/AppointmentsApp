@@ -1,5 +1,6 @@
 package sample.Controller;
 
+import com.mysql.cj.xdevapi.Table;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -18,6 +19,7 @@ import sample.Model.Customer;
 import sample.helper.JDBC;
 import sample.helper.Query;
 
+import javax.swing.*;
 import java.io.IOException;
 import java.net.URL;
 import java.sql.*;
@@ -28,15 +30,16 @@ import java.util.ResourceBundle;
 
 public class CustomersController implements Initializable {
 
-    public TableView <Customer> TableCustomers;
-    public TableColumn <Customer,  Integer> Customer_ID;
-    public TableColumn <Customer, String> Customer_Name;
-    public TableColumn <Customer, String> Address;
-    public TableColumn <Customer, String> Postal_Code;
-    public TableColumn <Customer, String> Phone;
+    public TableView<Customer> TableCustomers;
+    public TableColumn<Customer, Integer> Customer_ID;
+    public TableColumn<Customer, String> Customer_Name;
+    public TableColumn<Customer, String> Address;
+    public TableColumn<Customer, String> Postal_Code;
+    public TableColumn<Customer, String> Phone;
     public Button addButton;
-    public TableColumn <Customer, String> CountryColumn;
-    public TableColumn <Customer, String> DivisionColumn;
+    public TableColumn<Customer, String> CountryColumn;
+    public TableColumn<Customer, String> DivisionColumn;
+    public javafx.scene.control.Button deleteButton;
     private Object Button;
     private int Division_ID;
 
@@ -58,27 +61,25 @@ public class CustomersController implements Initializable {
 
     }
 
-         @Override
+    @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
 
         //columns configuration
         Customer_ID.setCellValueFactory(new PropertyValueFactory<Customer, Integer>("customerId"));
         Customer_Name.setCellValueFactory(new PropertyValueFactory<Customer, String>("customerName"));
         Address.setCellValueFactory(new PropertyValueFactory<Customer, String>("customerAddress"));
-        Postal_Code.setCellValueFactory(new PropertyValueFactory <Customer, String> ("zipCode"));
+        Postal_Code.setCellValueFactory(new PropertyValueFactory<Customer, String>("zipCode"));
         Phone.setCellValueFactory(new PropertyValueFactory<Customer, String>("phoneNumber"));
         CountryColumn.setCellValueFactory(new PropertyValueFactory<Customer, String>("country"));
         DivisionColumn.setCellValueFactory(new PropertyValueFactory<Customer, String>("division"));
-       // DivisionIDColumn.setCellValueFactory(new PropertyValueFactory<Customer, Integer>("divisionId"));
+        // DivisionIDColumn.setCellValueFactory(new PropertyValueFactory<Customer, Integer>("divisionId"));
 
-        try{
+        try {
             loadCustomers();
-        }
-        catch(SQLException e){
+        } catch (SQLException e) {
 
-            System.out.println (e.getMessage());
+            System.out.println(e.getMessage());
         }
-
 
 
     }
@@ -101,7 +102,28 @@ public class CustomersController implements Initializable {
         stage.setScene(new Scene(scene));
         stage.show();
     }
+
+    public void deleteButtonPushed(ActionEvent event) throws SQLException {
+        System.out.println ("Delete pushed");
+        if (TableCustomers.getSelectionModel().getSelectedItem() == null) {
+            System.out.println("Please select first!");
+        }
+        else {
+
+            Customer customerDelete = TableCustomers.getSelectionModel().getSelectedItem();
+            int customerID = customerDelete.getCustomerId();
+
+            int rowsAffected = Query.checkForAppointments(customerID);
+            if (rowsAffected > 0) {
+                System.out.println("Please delete appointment first!");
+            } else
+                Query.deleteCustomer(customerID);
+            TableCustomers.setItems(Query.selectCustomers());
+        }
+
+    }
 }
+
 
 
 

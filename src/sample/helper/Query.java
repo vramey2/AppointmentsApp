@@ -23,11 +23,33 @@ public class Query {
 
         } else
             return false;
-
-
     }
 
+    public static int deleteCustomer (int customerID) throws SQLException {
 
+        String sql = "DELETE FROM CUSTOMERS WHERE Customer_ID = ?";
+        PreparedStatement ps = JDBC.connection.prepareStatement(sql);
+        ps.setInt(1, customerID);
+        int rowsAffected = ps.executeUpdate();
+        return rowsAffected;
+            }
+
+
+            public static int checkForAppointments (int customerID) throws SQLException{
+
+        String sql = "SELECT Appointment_ID  FROM APPOINTMENTS WHERE Customer_ID = ? ";
+
+                PreparedStatement ps = JDBC.connection.prepareStatement(sql);
+                ps.setInt (1, customerID);
+                ResultSet resultSet = ps.executeQuery();
+                int rowsAffected = 0;
+                while (resultSet.next() ){
+                    rowsAffected +=1;
+                }
+                return rowsAffected;
+
+
+            }
 
     public static ObservableList selectAppointments() throws SQLException {
         ObservableList<Appointment> appointments = FXCollections.observableArrayList();
