@@ -6,8 +6,20 @@ import sample.Model.Appointment;
 import sample.Model.Customer;
 
 import java.sql.*;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.Date;
+import java.util.TimeZone;
 
 public class Query {
+
+  //  private static Object ZonedDateTime;
 
     public Query() throws SQLException {
     }
@@ -25,33 +37,33 @@ public class Query {
             return false;
     }
 
-    public static int deleteCustomer (int customerID) throws SQLException {
+    public static int deleteCustomer(int customerID) throws SQLException {
 
         String sql = "DELETE FROM CUSTOMERS WHERE Customer_ID = ?";
         PreparedStatement ps = JDBC.connection.prepareStatement(sql);
         ps.setInt(1, customerID);
         int rowsAffected = ps.executeUpdate();
         return rowsAffected;
-            }
+    }
 
 
-            public static int checkForAppointments (int customerID) throws SQLException{
+    public static int checkForAppointments(int customerID) throws SQLException {
 
         String sql = "SELECT Appointment_ID  FROM APPOINTMENTS WHERE Customer_ID = ? ";
 
-                PreparedStatement ps = JDBC.connection.prepareStatement(sql);
-                ps.setInt (1, customerID);
-                ResultSet resultSet = ps.executeQuery();
-                int rowsAffected = 0;
-                while (resultSet.next() ){
-                    rowsAffected +=1;
-                }
-                return rowsAffected;
+        PreparedStatement ps = JDBC.connection.prepareStatement(sql);
+        ps.setInt(1, customerID);
+        ResultSet resultSet = ps.executeQuery();
+        int rowsAffected = 0;
+        while (resultSet.next()) {
+            rowsAffected += 1;
+        }
+        return rowsAffected;
 
 
-            }
+    }
 
-    public static ObservableList selectAppointments() throws SQLException {
+    public static ObservableList selectAppointments() throws SQLException, ParseException {
         ObservableList<Appointment> appointments = FXCollections.observableArrayList();
         String sql = "SELECT Appointment_ID, Title, Description, Location, Type, Contact_ID, Start, End, Customer_ID, User_ID from  APPOINTMENTS";
         PreparedStatement ps = JDBC.connection.prepareStatement(sql);
@@ -64,13 +76,49 @@ public class Query {
             String location = rs.getString("Location");
             int contact = rs.getInt("Contact_ID");
             String type = rs.getString("Type");
-            Timestamp startDateTime = rs.getTimestamp("Start");
+            Timestamp startDateTime= rs.getTimestamp("Start");
+
             Timestamp endDateTime = rs.getTimestamp("End");
             int customerID = rs.getInt("Customer_ID");
             int userID = rs.getInt("User_ID");
 
+            ZoneId utcZoneId = ZoneId.of("UTC");
+      //      LocalDateTime utzLDT = LocalDateTime.of(startDateTime);
+        //    ZonedDateTime utcZDT = ZonedDateTime.of(startDateTime, utcZoneId);
+
+
+         ZoneId myZoneID = ZoneId.systemDefault();
+            /**DateFormat utcFormat = new SimpleDateFormat("yyyy-MM-dd   HH:mm:ss");
+            utcFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
+
+            Date startDate = (Date) utcFormat.parse(String.valueOf(startDateTime));
+
+            DateFormat myFormat = new SimpleDateFormat("yyyy-MM-dd  HH:mm:ss");
+            myFormat.setTimeZone(TimeZone.getDefault());
+            String formattedStartDateTime = myFormat.format(startDateTime);
+            String formattedEndDateTime = myFormat.format(endDateTime);
+            System.out.println (formattedStartDateTime);
+            */
+           //  DateTimeFormatter formatter;
+            ZonedDateTime myStartDateTime = ZonedDateTime.ofInstant(startDateTime.toInstant(), myZoneID);
+            ZonedDateTime myEndDateTime = ZonedDateTime.ofInstant(endDateTime.toInstant(), myZoneID);
+            System.out.println (myEndDateTime + "end date time");
+         //  DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd - HH:mm:ss Z");
+           DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm_ss ").withZone(ZoneOffset.systemDefault());
+
+          ZonedDateTime utcStartDateTime = ZonedDateTime.ofInstant(startDateTime.toInstant(), utcZoneId);
+
+          DateTimeFormatter utcFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss ").withZone(ZoneOffset.UTC);
+           String formattedStartDateTime = utcFormatter.format(utcStartDateTime);
+          //  ZonedDateTime.parse(startDateTime, formatter)
+            System.out.println(formattedStartDateTime);
+         //  String formattedEndDateTime = formatter.format(ZonedDateTime.ofInstant(endDateTime.toInstant(), myZoneID));
+            String formattedEndDateTime = utcFormatter.format(myEndDateTime);
+            System.out.println(formattedStartDateTime);
+            System.out.println(formattedEndDateTime);
+
             Appointment newAppointment = new Appointment(id, title, description, contact, location, type,
-                    startDateTime, endDateTime, customerID, userID);
+                    startDateTime, endDateTime, customerID, userID, formattedStartDateTime, formattedEndDateTime);
             appointments.add(newAppointment);
 
         }
@@ -84,59 +132,81 @@ public class Query {
     public static ObservableList selectCustomers() throws SQLException {
         ObservableList<Customer> customers = FXCollections.observableArrayList();
 
-        String sql = "   SELECT c.Customer_ID, c.Customer_Name, c.Address, c.Postal_Code, c.Phone, c.Division_ID, fld.Division, co.Country FROM Customers AS c INNER JOIN first_level_divisions as fld ON c.Division_ID = fld.Division_ID INNER JOIN countries as co ON fld.Country_ID = co.Country_ID"  ;
+        String sql = "   SELECT c.Customer_ID, c.Customer_Name, c.Address, c.Postal_Code, c.Phone, c.Division_ID, fld.Division, co.Country FROM Customers AS c INNER JOIN first_level_divisions as fld ON c.Division_ID = fld.Division_ID INNER JOIN countries as co ON fld.Country_ID = co.Country_ID";
         PreparedStatement ps = JDBC.connection.prepareStatement(sql);
         ResultSet resultSet = ps.executeQuery();
 
-        while (resultSet.next()){
+        while (resultSet.next()) {
             System.out.println("Inside rsult set");
 
             int customerID = resultSet.getInt("Customer_ID");
-            System.out.println (customerID);
+            System.out.println(customerID);
             String customerName = resultSet.getString("Customer_Name");
 
-            String zipCode = resultSet.getString ("Postal_Code");
-            String phoneNumber = resultSet.getString ("Phone");
-            System.out.println (phoneNumber);
+            String zipCode = resultSet.getString("Postal_Code");
+            String phoneNumber = resultSet.getString("Phone");
+            System.out.println(phoneNumber);
             String division = resultSet.getString("Division");
             int divisionId = resultSet.getInt("Division_ID");
             //String country = Query.selectCountry (Division_ID);
             // PreparedStatement customertCountry = JDBC.connection.prepareStatement( " SELECT Country FROM countries INNER JOIN first_level_divisions ON countries.Country_ID = first_level_divisions.Country_ID WHERE Division_ID = ?");
-            String country =  resultSet.getString ("Country");
-            String customerAddress = resultSet.getString ("Address") + ", " + division + ", " + country ;
-            Customer newCustomer = new Customer (customerID, customerName, customerAddress, zipCode, phoneNumber, country, division, divisionId);
-            customers.add (newCustomer);
+            String country = resultSet.getString("Country");
+            String customerAddress = resultSet.getString("Address") + ", " + division + ", " + country;
+            Customer newCustomer = new Customer(customerID, customerName, customerAddress, zipCode, phoneNumber, country, division, divisionId);
+            customers.add(newCustomer);
 
 /**
  Customer newCustomer = new Customer(resultSet.getInt ("Customer_ID"), resultSet.getString ("Customer_Name"),
  resultSet.getString("Address"), resultSet.getInt("Postal_Code"), resultSet.getString("Phone"));
  customers.add(newCustomer);
  System.out.println(newCustomer);*/
-            System.out.println (customerID + customerName + customerAddress + zipCode + phoneNumber);
-            System.out.println ("");
-            System.out.println ("in the while");
+            System.out.println(customerID + customerName + customerAddress + zipCode + phoneNumber);
+            System.out.println("");
+            System.out.println("in the while");
         }
         return customers;
     }
 
 
-public static Integer DivisionID (String Division) throws SQLException{
- Integer divisionID = 0;
+    public static Integer DivisionID(String Division) throws SQLException {
+        Integer divisionID = 0;
 
 
-            String sql = "SELECT Division, Division_ID FROM first_level_divisions WHERE Division =  ? ";
-            PreparedStatement ps = JDBC.connection.prepareStatement(sql);
-            ps.setString(1, Division);
-            ResultSet resultSet = ps.executeQuery();
-            while (resultSet.next() ){
-                 divisionID = resultSet.getInt ("Division_ID");
-              System.out.println ("Division ID is " + divisionID);
-            }
+        String sql = "SELECT Division, Division_ID FROM first_level_divisions WHERE Division =  ? ";
+        PreparedStatement ps = JDBC.connection.prepareStatement(sql);
+        ps.setString(1, Division);
+        ResultSet resultSet = ps.executeQuery();
+        while (resultSet.next()) {
+            divisionID = resultSet.getInt("Division_ID");
+            System.out.println("Division ID is " + divisionID);
+        }
 
 
-System.out.println (divisionID);
+        System.out.println(divisionID);
         return divisionID;
-}
+    }
+
+
+    public static Integer CountryID(String Country) throws SQLException {
+        Integer countryID = 0;
+
+
+        String sql = "SELECT Country_ID FROM countries WHERE Country =  ? ";
+        PreparedStatement ps = JDBC.connection.prepareStatement(sql);
+        ps.setString(1, Country);
+        ResultSet resultSet = ps.executeQuery();
+        while (resultSet.next()) {
+            countryID = resultSet.getInt("Country_ID");
+            //  System.out.println ("Division ID is " + divisionID);
+        }
+
+
+        //System.out.println (divisionID);
+        return countryID;
+    }
+
+
+
     public static ObservableList  <String> selectCountry(int Division_ID)throws SQLException{
         ObservableList <String> selectCountry = FXCollections.observableArrayList();
         try {
@@ -179,7 +249,25 @@ System.out.println (divisionID);
 
 
     }
+    //update customer in DB
+    public static int updateCustomer(String customerName, String customerAddress, String zipCode, String phoneNumber,
+                                     int divisionId, int customerID)
+            throws SQLException {
 
+        String sql = "UPDATE CUSTOMERS SET Customer_Name = ?,  Address = ?, Postal_Code = ?, Phone = ?, Division_ID  = ? WHERE Customer_ID = ?";
+        PreparedStatement ps = JDBC.connection.prepareStatement(sql);
+        ps.setString(1, customerName);
+        ps.setString(2, customerAddress);
+        ps.setString(3, zipCode);
+        ps.setString(4, phoneNumber);
+        ps.setInt(5, divisionId);
+        ps.setInt(6, customerID);
+
+        int rowsAffected = ps.executeUpdate();
+        return rowsAffected;
+
+
+    }
 
     public static ObservableList <String> loadDivisions(int Country_ID) throws SQLException
 
@@ -212,6 +300,7 @@ System.out.println (divisionID);
     }
 
 
+
 /**
     public ArrayList <Division> getInfo(String Country){
 
@@ -220,7 +309,36 @@ System.out.println (divisionID);
 
 
     }
+
+    public static ObservableList <String> loadAllCountries() throws SQLException  {
+
+        ObservableList <String> allCountries = FXCollections.observableArrayList();
+        String sql = "SELECT COUNTRY FROM countries";
+        PreparedStatement ps = JDBC.connection.prepareStatement(sql);
+        ResultSet resultSet = ps.executeQuery();
+        while (resultSet.next()) {
+
+            String country = resultSet.getString("Country");
+            allCountries.add(country);
+
+        }
+        return allCountries;
     }
+    public static ObservableList <String> loadAllDivisions() throws SQLException  {
+
+        ObservableList <String> allDivisions = FXCollections.observableArrayList();
+        String sql = "SELECT Division FROM first_level_divisions";
+        PreparedStatement ps = JDBC.connection.prepareStatement(sql);
+        ResultSet resultSet = ps.executeQuery();
+        while (resultSet.next()) {
+
+            String division = resultSet.getString("Division");
+            allDivisions.add(division);
+
+        }
+        return allDivisions;
+    }
+}
 
 
 

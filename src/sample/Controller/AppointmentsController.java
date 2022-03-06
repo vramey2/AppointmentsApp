@@ -2,18 +2,25 @@ package sample.Controller;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
+import javafx.scene.Node;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.stage.Stage;
 import sample.Model.Appointment;
-import sample.Model.Customer;
 import sample.helper.JDBC;
 import sample.helper.Query;
 
 
+
+import java.io.IOException;
 import java.net.URL;
 import java.sql.*;
+import java.util.Optional;
 import java.util.ResourceBundle;
 
 public class AppointmentsController implements Initializable {
@@ -26,10 +33,18 @@ public class AppointmentsController implements Initializable {
     public TableColumn <Appointment, String> locationColumn;
     public TableColumn <Appointment, Integer> contactColumn;
     public TableColumn <Appointment, String> typeColumn;
-    public TableColumn <Appointment, Timestamp> startColumn;
-    public TableColumn <Appointment, Timestamp>  endColumn;
+    public TableColumn<Appointment, String> startColumn;
+    public TableColumn<Appointment, String> endColumn;
     public TableColumn <Appointment, Integer> customerIdColumn;
     public TableColumn <Appointment, Integer> userIdColumn;
+    public Button addAppButton;
+    public Button updateButton;
+    public Button deleteButton;
+    public Button goBackButton;
+    public ToggleGroup toggleGroup;
+    public RadioButton viewByMonthRadio;
+    public RadioButton viewByWeekRadio;
+   // private EventQueueItem Node;
 
     public void loadAppointments() throws SQLException {
      ObservableList <Appointment> appointments = FXCollections.observableArrayList();
@@ -72,8 +87,8 @@ public class AppointmentsController implements Initializable {
             locationColumn.setCellValueFactory(new PropertyValueFactory<Appointment, String>("location"));
             contactColumn.setCellValueFactory(new PropertyValueFactory<Appointment, Integer>("contact"));
             typeColumn.setCellValueFactory(new PropertyValueFactory<Appointment, String>("type"));
-            startColumn.setCellValueFactory(new PropertyValueFactory<Appointment, Timestamp>("startDateTime"));
-            endColumn.setCellValueFactory(new PropertyValueFactory<Appointment, Timestamp>("endDateTime"));
+            startColumn.setCellValueFactory(new PropertyValueFactory<Appointment, String>("startString"));
+            endColumn.setCellValueFactory(new PropertyValueFactory<Appointment, String>("endString"));
             customerIdColumn.setCellValueFactory(new PropertyValueFactory<Appointment, Integer>("customerID"));
             userIdColumn.setCellValueFactory(new PropertyValueFactory<Appointment, Integer>("userID"));
 
@@ -86,6 +101,55 @@ public class AppointmentsController implements Initializable {
         }
 
 
+    public void addAppButtonPushed(ActionEvent event) {
     }
+
+    public void updateButtonPushed(ActionEvent event) {
+    }
+
+    public void deleteButtonPushed(ActionEvent event) {
+    }
+
+    public void goBackPushed(ActionEvent event) throws IOException {
+
+        Alert alert = new Alert (Alert.AlertType.CONFIRMATION);
+        alert.setContentText("Do you want to go back without saving?");
+        Optional<ButtonType> result = alert.showAndWait();
+        // alert.showAndWait();
+        if (result.get() == ButtonType.OK) {
+            Stage stage = (Stage) ((Button) event.getSource()).getScene().getWindow();
+            Object scene = FXMLLoader.load(getClass().getResource("/sample/View/Customers.fxml"));
+            stage.setScene(new Scene((Parent) scene));
+            stage.show();
+        }
+    }
+
+    public void viewByMonthSelected(ActionEvent event) throws IOException {
+        Parent tableParent = FXMLLoader.load(getClass().getResource("/sample/View/filteredMonthlyViewController.fxml"));
+        Scene newScene = new Scene(tableParent);
+
+        Stage window = (Stage)((Node) event.getSource()).getScene().getWindow();
+        window.setScene(newScene);
+        window.show();
+    }
+
+    public void viewByWeekSelected(ActionEvent event) throws IOException {
+    /**    Stage stage;
+        Parent scene;
+        stage = (Stage) ((Button) event.getSource()).getScene().getWindow();*/
+Parent tableParent = FXMLLoader.load(getClass().getResource("/sample/View/filteredWeeklyAppView.fxml"));
+Scene newScene = new Scene(tableParent);
+
+Stage window = (Stage)((Node) event.getSource()).getScene().getWindow();
+window.setScene(newScene);
+window.show();
+      //FXMLLoader loader = new FXMLLoader (getClass().getResource("/sample/View/filteredWeeklyAppView.fxml"));
+        /**stage.setScene(new Scene(scene));
+        stage.show();*/
+      //  loader.load();
+
+
+    }
+}
 
 

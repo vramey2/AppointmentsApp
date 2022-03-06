@@ -6,6 +6,7 @@ import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
@@ -17,6 +18,7 @@ import javafx.stage.Stage;
 import sample.Model.Appointment;
 import sample.Model.Customer;
 import sample.helper.JDBC;
+import sample.Controller.UpdateCustomerController;
 import sample.helper.Query;
 
 import javax.swing.*;
@@ -42,6 +44,8 @@ public class CustomersController implements Initializable {
     public javafx.scene.control.Button deleteButton;
     private Object Button;
     private int Division_ID;
+    /** Object of customer that was selected by the user */
+    private static Customer selectedCustomer;
 
 
     //To load from the database
@@ -121,6 +125,37 @@ public class CustomersController implements Initializable {
             TableCustomers.setItems(Query.selectCustomers());
         }
 
+    }
+
+    public void updateButtonPushed(ActionEvent event) throws IOException, SQLException {
+        if (TableCustomers.getSelectionModel().getSelectedItem() == null){
+            Alert alert = new Alert ( Alert.AlertType.WARNING);
+            alert.setHeaderText("Please select a customer to update!");
+            alert.showAndWait();
+        }
+        else {
+/**
+            selectedCustomer = TableCustomers.getSelectionModel().getSelectedItem();
+            Stage stage;
+            Parent scene;
+            stage = (Stage) ((Button) event.getSource()).getScene().getWindow();
+            scene = FXMLLoader.load(getClass().getResource("/sample/View/updateCustomer.fxml"));
+            stage.setScene(new Scene(scene));
+            stage.show();*/
+
+FXMLLoader loader = new FXMLLoader();
+            loader.setLocation(getClass().getResource("/sample/View/UpdateCustomer.fxml"));
+
+            Parent tableViewParent = loader.load();
+            Scene tableViewScene = new Scene(tableViewParent);
+            UpdateCustomerController controller = loader.getController();
+
+            controller.populateData(TableCustomers.getSelectionModel().getSelectedItem());
+
+            Stage window = (Stage) ((Node) event.getSource()).getScene().getWindow();
+            window.setScene(tableViewScene);
+            window.show();
+        }
     }
 }
 

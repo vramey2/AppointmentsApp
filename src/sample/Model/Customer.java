@@ -1,8 +1,5 @@
 package sample.Model;
 
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
-
 public class Customer
 
 { /**List of appointments of the Customer */

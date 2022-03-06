@@ -52,7 +52,7 @@
       <HBox alignment="TOP_RIGHT" layoutX="330.0" layoutY="329.0" prefHeight="100.0" prefWidth="467.0" spacing="10.0">
          <children>
             <Button fx:id="addButton" mnemonicParsing="false" onAction="#addButtonPushed" text="Add" />
-            <Button mnemonicParsing="false" text="Update" />
+            <Button fx:id="updateButton" mnemonicParsing="false" onAction="#updateButtonPushed" text="Update" />
             <Button fx:id="deleteButton" mnemonicParsing="false" onAction="#deleteButtonPushed" text="Delete" />
          </children>
          <padding>
