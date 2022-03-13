@@ -101,7 +101,13 @@ public class AppointmentsController implements Initializable {
         }
 
 
-    public void addAppButtonPushed(ActionEvent event) {
+    public void addAppButtonPushed(ActionEvent event) throws IOException {
+        Stage stage;
+        Parent scene;
+        stage = (Stage) ((Button) event.getSource()).getScene().getWindow();
+        scene = FXMLLoader.load(getClass().getResource("/sample/View/addAppointmentScreen.fxml"));
+        stage.setScene(new Scene(scene));
+        stage.show();
     }
 
     public void updateButtonPushed(ActionEvent event) {

@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+<AnchorPane prefHeight="468.0" prefWidth="743.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.Controller.AddAppointmentController">
+    <children>
+        <VBox layoutX="304.0" layoutY="35.0" prefHeight="418.0" prefWidth="216.0" spacing="10.0">
+            <padding>
+                <Insets bottom="20.0" />
+            </padding>
+         <children>
+            <Label text="Start Date " />
+            <DatePicker fx:id="startDT" />
+             <Label prefHeight="18.0" prefWidth="109.0" text="Start Time (HH:MM)" />
+            <Label text="Hours" />
+            <Spinner fx:id="hourStartSpinner" editable="true" prefHeight="26.0" prefWidth="103.0" />
+            <Label text="Minutes" />
+            <Spinner fx:id="minuteStartSpinner" editable="true" layoutX="10.0" layoutY="103.0" prefHeight="26.0" prefWidth="103.0" />
+            <HBox prefHeight="100.0" prefWidth="200.0" />
+         </children>
+        </VBox>
+        <VBox prefHeight="342.0" prefWidth="299.0" spacing="50.0">
+            <padding>
+                <Insets left="20.0" right="20.0" top="20.0" />
+            </padding>
+            <children>
+            <VBox prefHeight="342.0" prefWidth="253.0" spacing="50.0">
+               <padding>
+                  <Insets left="20.0" right="20.0" top="20.0" />
+               </padding>
+               <children>
+                      <Label text="Add Appointment">
+                          <font>
+                              <Font name="System Bold" size="14.0" />
+                          </font>
+                      </Label>
+               </children>
+            </VBox>
+            </children>
+        </VBox>
+        <GridPane alignment="BOTTOM_LEFT" hgap="10.0" layoutX="50.0" layoutY="100.0" prefHeight="152.0" prefWidth="240.0" vgap="20.0">
+            <columnConstraints>
+                <ColumnConstraints hgrow="SOMETIMES" maxWidth="94.0" minWidth="10.0" prefWidth="91.0" />
+                <ColumnConstraints hgrow="SOMETIMES" maxWidth="125.00000762939453" minWidth="10.0" prefWidth="109.0" />
+            </columnConstraints>
+            <rowConstraints>
+                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+            <RowConstraints />
+            <RowConstraints />
+            </rowConstraints>
+            <children>
+                <Label text="ID" />
+                <Label text="Title" GridPane.rowIndex="1" />
+                <Label text="Description" GridPane.rowIndex="2" />
+                <Label text="Location" GridPane.rowIndex="3" />
+                <Label text="Contact ID" GridPane.rowIndex="4" />
+                <Label text="Type" GridPane.rowIndex="5" />
+                <Label text="Customer ID" GridPane.rowIndex="6" />
+                <Label text="UserID" GridPane.rowIndex="7" />
+                <TextField fx:id="appointmentIdTextfield" GridPane.columnIndex="1" />
+                <TextField fx:id="titleTextField" prefHeight="26.0" prefWidth="120.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                <TextField fx:id="descriptionTextfield" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                <TextField fx:id="locationTextfield" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                <TextField fx:id="contactTextfield" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+                <TextField fx:id="typeTextfield" GridPane.columnIndex="1" GridPane.rowIndex="5" />
+                <TextField fx:id="customerTextfield" GridPane.columnIndex="1" GridPane.rowIndex="6" />
+                <TextField fx:id="userIdTextfield" GridPane.columnIndex="1" GridPane.rowIndex="7" />
+            </children>
+        </GridPane>
+      <VBox layoutX="527.0" layoutY="36.0" prefHeight="349.0" prefWidth="202.0" spacing="10.0">
+         <children>
+            <Label text="End Date" />
+            <DatePicker fx:id="endDT" />
+            <Label prefHeight="18.0" prefWidth="109.0" text="End Time (HH:MM)" />
+            <Label text="Hours" />
+            <Spinner fx:id="hourEndSpinner" editable="true" prefHeight="26.0" prefWidth="103.0" />
+            <Label text="Minutes" />
+            <Spinner fx:id="minuteEndSpinner" editable="true" prefHeight="26.0" prefWidth="103.0" />
+         </children>
+         <padding>
+            <Insets bottom="20.0" />
+         </padding>
+      </VBox>
+      <VBox layoutX="473.0" layoutY="353.0" prefHeight="107.0" prefWidth="260.0" spacing="10.0">
+         <children>
+              <HBox alignment="CENTER_RIGHT" prefHeight="36.0" prefWidth="249.0" spacing="20.0">
+                  <children>
+                      <Button fx:id="saveButton" mnemonicParsing="false" onAction="#saveButtonPushed" text="Save" />
+                      <Button fx:id="cancelButton" mnemonicParsing="false" onAction="#cancelButtonPushed" text="Cancel" />
+                  </children>
+                  <padding>
+                      <Insets right="30.0" />
+                  </padding>
+              </HBox>
+         </children>
+         <padding>
+            <Insets bottom="20.0" />
+         </padding>
+      </VBox>
+    </children>
+
+</AnchorPane>

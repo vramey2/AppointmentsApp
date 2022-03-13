@@ -9,10 +9,7 @@ import java.sql.*;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.time.ZoneOffset;
-import java.time.ZonedDateTime;
+import java.time.*;
 import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.TimeZone;
@@ -63,7 +60,7 @@ public class Query {
 
     }
 
-    public static ObservableList selectAppointments() throws SQLException, ParseException {
+    public static <LodalDate> ObservableList selectAppointments() throws SQLException, ParseException {
         ObservableList<Appointment> appointments = FXCollections.observableArrayList();
         String sql = "SELECT Appointment_ID, Title, Description, Location, Type, Contact_ID, Start, End, Customer_ID, User_ID from  APPOINTMENTS";
         PreparedStatement ps = JDBC.connection.prepareStatement(sql);
@@ -86,7 +83,7 @@ public class Query {
       //      LocalDateTime utzLDT = LocalDateTime.of(startDateTime);
         //    ZonedDateTime utcZDT = ZonedDateTime.of(startDateTime, utcZoneId);
 
-
+System.out.println (startDateTime + " timestamp");
          ZoneId myZoneID = ZoneId.systemDefault();
             /**DateFormat utcFormat = new SimpleDateFormat("yyyy-MM-dd   HH:mm:ss");
             utcFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
@@ -99,6 +96,26 @@ public class Query {
             String formattedEndDateTime = myFormat.format(endDateTime);
             System.out.println (formattedStartDateTime);
             */
+
+            ZonedDateTime utcStartZDT = ZonedDateTime.ofInstant (startDateTime.toInstant(), utcZoneId);
+            ZonedDateTime utcEndZDT = ZonedDateTime.ofInstant (endDateTime.toInstant(), utcZoneId);
+System.out.println (utcStartZDT + "utcStartZDT");
+            ZonedDateTime myStartDateTime = ZonedDateTime.ofInstant (utcStartZDT.toInstant(), myZoneID);
+            System.out.println (myStartDateTime + "myStartDT");
+            ZonedDateTime startToLocalInstat = utcStartZDT.withZoneSameInstant(myZoneID);
+            System.out.println (startToLocalInstat + "instant");
+            ZonedDateTime startLocal = startDateTime.toInstant().atZone(myZoneID);
+            System.out.println (startLocal + "startLocal");
+            ZonedDateTime myEndDateTime = ZonedDateTime.ofInstant(utcEndZDT.toInstant(), myZoneID);
+            String startTime = String.valueOf (myStartDateTime.toLocalTime());
+            String endTime = String.valueOf (myEndDateTime.toLocalTime());
+            String startDate = String.valueOf (myStartDateTime.toLocalDate());
+            String endDate = String.valueOf(myEndDateTime.toLocalDate());
+
+            String formattedStartDateTime = startTime + " " + startDate;
+            String formattedEndDateTime = endTime + " " + endDate;
+
+            /**this one worked
            //  DateTimeFormatter formatter;
             ZonedDateTime myStartDateTime = ZonedDateTime.ofInstant(startDateTime.toInstant(), myZoneID);
             ZonedDateTime myEndDateTime = ZonedDateTime.ofInstant(endDateTime.toInstant(), myZoneID);
@@ -116,7 +133,7 @@ public class Query {
             String formattedEndDateTime = utcFormatter.format(myEndDateTime);
             System.out.println(formattedStartDateTime);
             System.out.println(formattedEndDateTime);
-
+*/
             Appointment newAppointment = new Appointment(id, title, description, contact, location, type,
                     startDateTime, endDateTime, customerID, userID, formattedStartDateTime, formattedEndDateTime);
             appointments.add(newAppointment);
@@ -337,6 +354,33 @@ public class Query {
 
         }
         return allDivisions;
+    }
+
+    //add customer to DB
+    public static int insertAppointment  ( String title, String description,  String location, String type,
+                                          String startDateTime, String endDateTime, int customerID, int userID, int contact )
+            throws SQLException {
+
+        String sql = "INSERT INTO APPOINTMENTS (Title, Description, Location, Type, Start, End, Customer_ID, User_ID, Contact_ID)" +
+                "VALUES ( ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        PreparedStatement ps = JDBC.connection.prepareStatement(sql);
+        ps.setString(1, title);
+        ps.setString(2,description);
+
+        ps.setString(3, location);
+        ps.setString(4, type);
+        ps.setString(5, startDateTime);
+        ps.setString (6, endDateTime);
+        ps.setInt (7, customerID);
+        ps.setInt (8, userID);
+        ps.setInt(9, contact);
+
+
+
+        int rowsAffected = ps.executeUpdate();
+        return rowsAffected;
+
+
     }
 }
 
