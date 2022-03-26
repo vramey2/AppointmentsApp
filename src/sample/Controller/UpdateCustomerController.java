@@ -42,12 +42,6 @@ public class UpdateCustomerController implements Initializable {
         });*/
         countryComboboxUpdateCustomer.valueProperty().addListener((observableValue, o, t1) -> {
             String selectedCountry = (String) countryComboboxUpdateCustomer.getValue();
-          /**  if (selectedCountry == null) {
-                System.out.println("inside listener");
-                selectDivisionUpdateCCombobox.getItems().clear();
-                selectDivisionUpdateCCombobox.setDisable(true);
-
-            }*/
 
             if (selectedCountry!= null)
                 selectDivisionUpdateCCombobox.setDisable(false);

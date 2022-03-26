@@ -7,7 +7,7 @@
 
 <AnchorPane prefHeight="400.0" prefWidth="1090.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.Controller.AppointmentsController">
    <children>
-      <VBox prefHeight="370.0" prefWidth="972.0">
+      <VBox layoutY="27.0" prefHeight="345.0" prefWidth="972.0">
          <opaqueInsets>
             <Insets />
          </opaqueInsets>
@@ -54,6 +54,7 @@
                <children>
                   <HBox alignment="TOP_RIGHT" prefHeight="57.0" prefWidth="942.0" spacing="10.0">
                      <children>
+                        <Label fx:id="previousButton" text="Previous" />
                         <Button fx:id="addAppButton" mnemonicParsing="false" onAction="#addAppButtonPushed" text="Add" />
                         <Button fx:id="updateButton" mnemonicParsing="false" onAction="#updateButtonPushed" text="Update" />
                         <Button fx:id="deleteButton" mnemonicParsing="false" onAction="#deleteButtonPushed" text="Delete" />

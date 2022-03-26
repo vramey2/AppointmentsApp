@@ -9,7 +9,7 @@
    <children>
       <VBox layoutX="377.0" layoutY="76.0" prefHeight="200.0" prefWidth="166.0" spacing="20.0">
          <children>
-            <ComboBox fx:id="selectCountryCombobox" onAction="#countrySelected" prefWidth="150.0" promptText="Country" />
+            <ComboBox fx:id="selectCountryCombobox" prefWidth="150.0" promptText="Country" />
             <ComboBox fx:id="selectDivisionCombobox" prefWidth="150.0" promptText="Division" />
          </children>
          <padding>

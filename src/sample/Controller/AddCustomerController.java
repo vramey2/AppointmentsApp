@@ -55,12 +55,10 @@ public class AddCustomerController implements Initializable {
                 Country_ID = 2;
             else
                 Country_ID = 3;
-        //    String selectedCountry = (String) selectCountryCombobox.getValue();
+
             try {
 
-               // String selectedCountry = selectCountryCombobox.getValue();
 
-             //   loadDivisions();
                 selectDivisionCombobox.setItems(Query.loadDivisions(Country_ID));
 
                 System.out.println (Country_ID);
@@ -71,10 +69,7 @@ public class AddCustomerController implements Initializable {
 
         });
 
-        {
 
-
-        }
     }
     public void saveButtonPushed(ActionEvent event) throws SQLException, IOException {
 
@@ -82,29 +77,37 @@ public class AddCustomerController implements Initializable {
         String customerAddress = customerAddressTextfield.getText();
         String zipCode = postalCodeTextfield.getText();
         String phoneNumber = phoneNumberTextfield.getText();
-    //    String country = selectCountryCombobox.getAccessibleText();
         String division = (String) selectDivisionCombobox.getValue();
-      //  int divisionId = Query.DivisionID(division);
+        String country = (String) selectCountryCombobox.getValue();
 
 
-      int rowsAffected =  Query.insertCustomer(customerName, customerAddress, zipCode, phoneNumber, Query.DivisionID(division));
-if (rowsAffected >0){
-    Alert alert = new Alert (Alert.AlertType.INFORMATION);
-    alert.setContentText("Customer Added!");
+if (customerName.isEmpty() || customerAddress.isEmpty() || zipCode.isEmpty() || phoneNumber.isEmpty() ||
+        division == null|| country ==null) {
+    Alert alert = new Alert(Alert.AlertType.ERROR);
+    alert.setHeaderText("Please fill out all fields to enter customer!");
+    alert.showAndWait();
 
-     alert.showAndWait();
+
+}
+else {
+
+    int rowsAffected = Query.insertCustomer(customerName, customerAddress, zipCode, phoneNumber, Query.DivisionID(division));
+    if (rowsAffected > 0) {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setContentText("Customer Added!");
+
+        alert.showAndWait();
 
         Stage stage = (Stage) ((Button) event.getSource()).getScene().getWindow();
         Object scene = FXMLLoader.load(getClass().getResource("/sample/View/Customers.fxml"));
         stage.setScene(new Scene((Parent) scene));
         stage.show();
     }
-
+}
 
 
 }
 
-    // Customer newCustomer = new Customer(customerName, customerAddress, zipCode, phoneNumber, division, country, divisionId);
 
 
     public void cancelButtonPushed(ActionEvent event) throws IOException {
@@ -121,9 +124,5 @@ if (rowsAffected >0){
          }
 
 
-    }
+    }}
 
-
-    public void countrySelected(ActionEvent event) {
-    }
-}

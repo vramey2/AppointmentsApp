@@ -40,6 +40,8 @@ public class AddAppointmentController implements Initializable {
     public Spinner minuteEndSpinner;
 
     public void saveButtonPushed(ActionEvent event) throws SQLException, IOException {
+
+        try {
         String title = titleTextField.getText();
         String description = descriptionTextfield.getText();
         int contact = Integer.parseInt(contactTextfield.getText());
@@ -63,6 +65,7 @@ public class AddAppointmentController implements Initializable {
         String endMinute = minuteEndSpinner.getValue().toString();
         if (endMinute.length() == 1)
             endMinute = "0" + endMinute;
+
         String endTime = endHour + ":" + endMinute;
         String startTime = startHour + ":" + startMinute;
         ZoneId myZDoneId = ZoneId.systemDefault();
@@ -84,21 +87,50 @@ public class AddAppointmentController implements Initializable {
       String endutcTime = String.valueOf(utcEndZDT.toLocalTime());
       String endDT = endDate + " " + endutcTime;
       System.out.println (endDate + " end date time");
-      //  String endDT = String.valueOf (utcEndZDT);
-        int rowsAffected =  Query.insertAppointment (title, description,  location, type, startDT, endDT, customerID, userID, contact);
-        if (rowsAffected >0){
-            Alert alert = new Alert (Alert.AlertType.INFORMATION);
-            alert.setContentText("Appointment Added!");
-
+      //convert to est to validate
+         ZoneId estZoneId = ZoneId.of("America/New_York");
+         ZonedDateTime estStartZDT = ZonedDateTime.ofInstant (utcStartZDT.toInstant(), estZoneId);
+        ZonedDateTime estEndZDT = ZonedDateTime.ofInstant (utcEndZDT.toInstant(), estZoneId);
+        System.out.println ("est start zdt: " + estStartZDT);
+        System.out.println ("est end zdt: " + estEndZDT);
+//compare input to business hours for overlap
+        LocalTime startEST = estStartZDT.toLocalTime();
+        LocalTime endEST = estEndZDT.toLocalTime();
+        LocalTime businessStart = LocalTime.of(8, 00);
+        LocalTime busienssEnd = LocalTime.of (22, 00);
+        if (startEST.isAfter(busienssEnd) || startEST.isBefore(businessStart)|| (endEST.isAfter(busienssEnd) || endEST.isBefore(businessStart))){
+            Alert alert = new Alert ( Alert.AlertType.WARNING);
+            alert.setHeaderText("Cannot schedule outside business hours!");
+            alert.showAndWait();
+        }
+       else  if (title.isEmpty()|| description.isEmpty()||location.isEmpty()|| type.isEmpty()){
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setHeaderText("Please enter valid value in all fields!");
             alert.showAndWait();
 
-            Stage stage = (Stage) ((Button) event.getSource()).getScene().getWindow();
-            Object scene = FXMLLoader.load(getClass().getResource("/sample/View/Appointments.fxml"));
-            stage.setScene(new Scene((Parent) scene));
-            stage.show();
         }
 
+        else {
 
+            //  String endDT = String.valueOf (utcEndZDT);
+            int rowsAffected = Query.insertAppointment(title, description, location, type, startDT, endDT, customerID, userID, contact);
+            if (rowsAffected > 0) {
+                Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                alert.setContentText("Appointment Added!");
+
+                alert.showAndWait();
+
+                Stage stage = (Stage) ((Button) event.getSource()).getScene().getWindow();
+                Object scene = FXMLLoader.load(getClass().getResource("/sample/View/Appointments.fxml"));
+                stage.setScene(new Scene((Parent) scene));
+                stage.show();
+            }
+
+        }}
+        catch (NumberFormatException e){
+
+            Utility.displayErrorAlert();
+        }
 
     }
 
@@ -120,14 +152,14 @@ public class AddAppointmentController implements Initializable {
         appointmentIdTextfield.setEditable(false);
 
         //configure the spinner with values of 0-24
-        SpinnerValueFactory <Integer> starthourValueFactory = new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 24);
+        SpinnerValueFactory <Integer> starthourValueFactory = new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 23);
         this.hourStartSpinner.setValueFactory(starthourValueFactory);
 
     SpinnerValueFactory <Integer> startminuteValueFactory = new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 59);
         this.minuteStartSpinner.setValueFactory(startminuteValueFactory);
 
 
-        SpinnerValueFactory <Integer> endhourValueFactory = new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 24);
+        SpinnerValueFactory <Integer> endhourValueFactory = new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 23);
         this.hourEndSpinner.setValueFactory(endhourValueFactory);
 
         SpinnerValueFactory <Integer> endtminuteValueFactory = new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 59);

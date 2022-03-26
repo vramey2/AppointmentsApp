@@ -12,6 +12,7 @@ import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.Stage;
 import sample.Model.Appointment;
+import sample.Model.Customer;
 import sample.helper.JDBC;
 import sample.helper.Query;
 
@@ -20,6 +21,7 @@ import sample.helper.Query;
 import java.io.IOException;
 import java.net.URL;
 import java.sql.*;
+import java.text.ParseException;
 import java.util.Optional;
 import java.util.ResourceBundle;
 
@@ -44,31 +46,14 @@ public class AppointmentsController implements Initializable {
     public ToggleGroup toggleGroup;
     public RadioButton viewByMonthRadio;
     public RadioButton viewByWeekRadio;
-   // private EventQueueItem Node;
+    public Label previousButton;
+    // private EventQueueItem Node;
 
     public void loadAppointments() throws SQLException {
      ObservableList <Appointment> appointments = FXCollections.observableArrayList();
         try {
             JDBC.openConnection();
-           /** String sql = "SELECT Appointment_ID, Title, Description, Location, Type, Contact_ID, Start, End, Customer_ID, User_ID from  APPOINTMENTS";
-            PreparedStatement ps = JDBC.connection.prepareStatement(sql);
-            ResultSet rs = ps.executeQuery();
-            while(rs.next()) {
 
-                int id = rs.getInt("Appointment_ID");
-                String title = rs.getString("Title");
-                String description = rs.getString("Description");
-                String location = rs.getString("Location");
-                int contact = rs.getInt("Contact_ID");
-                String type = rs.getString("Type");
-                Timestamp startDateTime = rs.getTimestamp("Start");
-                Timestamp endDateTime = rs.getTimestamp("End");
-                int customerID = rs.getInt("Customer_ID");
-                int userID = rs.getInt("User_ID");
-
-                Appointment newAppointment = new Appointment(id, title, description, contact, location, type,
-                        startDateTime, endDateTime, customerID, userID);
-                appointments.add(newAppointment);*/
                appointments = Query.selectAppointments();
 
         } catch (Exception e) {
@@ -91,6 +76,7 @@ public class AppointmentsController implements Initializable {
             endColumn.setCellValueFactory(new PropertyValueFactory<Appointment, String>("endString"));
             customerIdColumn.setCellValueFactory(new PropertyValueFactory<Appointment, Integer>("customerID"));
             userIdColumn.setCellValueFactory(new PropertyValueFactory<Appointment, Integer>("userID"));
+            previousButton.setVisible(false);
 
             try {
                 loadAppointments();
@@ -99,6 +85,8 @@ public class AppointmentsController implements Initializable {
                 System.out.println(e.getMessage());
             }
         }
+
+
 
 
     public void addAppButtonPushed(ActionEvent event) throws IOException {
@@ -110,11 +98,29 @@ public class AppointmentsController implements Initializable {
         stage.show();
     }
 
+
     public void updateButtonPushed(ActionEvent event) {
     }
 
-    public void deleteButtonPushed(ActionEvent event) {
+    public void deleteButtonPushed(ActionEvent event) throws SQLException, ParseException {
+
+        if (appointmentsTable.getSelectionModel().getSelectedItem() == null) {
+            Alert alert = new Alert ( Alert.AlertType.WARNING);
+            alert.setHeaderText("Please select appointment to delete!");
+            alert.showAndWait();
+           // System.out.println("Please select first!");
+        }
+        else {
+            Appointment appointmentDelete = appointmentsTable.getSelectionModel().getSelectedItem();
+            int appointmentID = appointmentDelete.getId();
+
+
+            Query.deleteAppointment (appointmentID);
+            appointmentsTable.setItems(Query.selectAppointments());
+        }
+
     }
+
 
     public void goBackPushed(ActionEvent event) throws IOException {
 
@@ -131,13 +137,16 @@ public class AppointmentsController implements Initializable {
     }
 
     public void viewByMonthSelected(ActionEvent event) throws IOException {
-        Parent tableParent = FXMLLoader.load(getClass().getResource("/sample/View/filteredMonthlyViewController.fxml"));
-        Scene newScene = new Scene(tableParent);
 
-        Stage window = (Stage)((Node) event.getSource()).getScene().getWindow();
-        window.setScene(newScene);
-        window.show();
+        try {
+            appointmentsTable.setItems(Query.selectMonthlyAppointments());
+            previousButton.setVisible(true);
+        } catch (SQLException | ParseException e) {
+
+            System.out.println(e.getMessage());
+        }
     }
+
 
     public void viewByWeekSelected(ActionEvent event) throws IOException {
     /**    Stage stage;
@@ -149,10 +158,7 @@ Scene newScene = new Scene(tableParent);
 Stage window = (Stage)((Node) event.getSource()).getScene().getWindow();
 window.setScene(newScene);
 window.show();
-      //FXMLLoader loader = new FXMLLoader (getClass().getResource("/sample/View/filteredWeeklyAppView.fxml"));
-        /**stage.setScene(new Scene(scene));
-        stage.show();*/
-      //  loader.load();
+
 
 
     }

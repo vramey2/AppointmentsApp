@@ -11,6 +11,8 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
+import sample.Model.User;
+import sample.Model.UserLogged;
 import sample.helper.JDBC;
 import sample.helper.Query;
 
@@ -20,9 +22,8 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
+import java.time.*;
+import java.time.format.DateTimeFormatter;
 import java.util.Locale;
 import java.util.ResourceBundle;
 
@@ -44,14 +45,15 @@ public class LoginController implements Initializable  {
         System.out.println ("Initialized!");
        locationLabel.setText("Your location: " + ZoneId.systemDefault());
         System.out.println("Your location: " + ZoneId.systemDefault());
-     //   Locale.setDefault(new Locale("fr"));
+    //  Locale.setDefault(new Locale("fr"));
         ResourceBundle rb = ResourceBundle.getBundle("sample/translt", Locale.getDefault());
-//        locationLabel.setText(ZoneId.systemDefault().toString());
+
     if(Locale.getDefault().getLanguage().equals("fr")){
         UsernameLabel.setText (rb.getString("UsernameLabel.text"));
         PasswordLabel.setText(rb.getString("PasswordLabel.text"));
         submitButton.setText(rb.getString("submitButton.text"));
-       // locationLabel.setText (rb.getString("locationLabel.text"));
+
+        locationLabel.setText (rb.getString("locationLabel.text") + ZoneId.systemDefault());
     }
     }
 
@@ -61,59 +63,101 @@ public class LoginController implements Initializable  {
         String password = Password.getText();
 
         if (userName.isEmpty() || password.isEmpty()){
+            Alert alert = new Alert(Alert.AlertType.ERROR);
 
-            System.out.println ("Please enter your user name ans password!");
+            if(Locale.getDefault().getLanguage().equals("fr"))
+
+            {    ResourceBundle rb = ResourceBundle.getBundle("sample/translt", Locale.getDefault());
+                alert.setHeaderText(rb.getString("alertempty.text"));
+
+            }
+            else
+                alert.setHeaderText("Please enter your user name and password!");
+            alert.showAndWait();
+
         }
 
         else
         {
             JDBC.openConnection();
-          boolean validate =  Query.select(userName, password);
+          boolean validate =  UserLogged.select(userName, password);
           if (validate) {
               System.out.println("Success!");
-              LocalDateTime myLDT = LocalDateTime.now();
-              //LocalDateTime myLDT = LocalDateTime.of(2020, 05, 28, 11, 55);
-              ZoneId myZoneID = ZoneId.systemDefault();
-              ZonedDateTime myZDT = ZonedDateTime.of(myLDT, myZoneID);
-              System.out.println ("myZDT " +  myZDT);
 
 
+         Instant now = Instant.now();
+              ZonedDateTime myZDT = ZonedDateTime.ofInstant(now,
+                      ZoneId.systemDefault());
               //convert to utc
               ZoneId utcZoneID = ZoneId.of("UTC");
               ZonedDateTime utcZDT = ZonedDateTime.ofInstant(myZDT.toInstant(), utcZoneID);
               System.out.println ("UTC tme: " + utcZDT);
+              DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+              String utcStart = utcZDT.format(formatter);
+              String utcEnd =  utcZDT.plusMinutes(15).format(formatter);
 
               try {
                   JDBC.openConnection();
+                  System.out.println("inside try");
                   String sql = "SELECT Appointment_ID, Start, End from appointments WHERE Start BETWEEN ? AND ? ";
                   PreparedStatement ps = JDBC.connection.prepareStatement(sql);
-                  ps.setObject(1, utcZDT);
-                  ps.setObject(2, utcZDT.plusMinutes(15));
+                  ps.setObject(1, utcStart);
+                  ps.setObject(2, utcEnd);
                   ResultSet resultSet = ps.executeQuery();
 
 
 
-                  //CREATE CUSTOMER OBJECT FROM EACH RECORD
-                  if  (resultSet.next()) {
 
-                      int appointmentID = resultSet.getInt("Appointment_ID");
-                      Timestamp start = resultSet.getTimestamp("Start");
-                      Timestamp end = resultSet.getTimestamp("End");
-                      System.out.println("inside if");
-                      System.out.println (appointmentID);
-                      Alert alert = new Alert(Alert.AlertType.WARNING);
-                      alert.setHeaderText("You have upcoming appointment! Appointment ID: " + appointmentID + " starting " + start + " and ending " + end);
-                      alert.showAndWait();
+                 if (resultSet.next() == false) {
+                     Alert alert = new Alert(Alert.AlertType.WARNING);
+                     if(Locale.getDefault().getLanguage().equals("fr")){
+                         ResourceBundle rb = ResourceBundle.getBundle("sample/translt", Locale.getDefault());
+                         alert.setHeaderText(rb.getString("noappointmentsalert"));
+
+                     }
+
+                     else
+                         alert.setHeaderText ("You don't have upcoming appointments!");
+                     alert.showAndWait();
+                     System.out.println ("In the else");
+                 }
+
+                 else {
+                     do {
+                         System.out.println("inside while result set");
+
+                         int appointmentID = resultSet.getInt("Appointment_ID");
+                         Timestamp start = resultSet.getTimestamp("Start");
 
 
-                  }
-                  else {
-                      Alert alert = new Alert(Alert.AlertType.WARNING);
-                      alert.setHeaderText ("You don't have upcoming appointments!");
-                      alert.showAndWait();
-                      System.out.println ("In the else");
-                  }
-              }
+
+                         ZonedDateTime utcmStart = start.toInstant().atZone(utcZoneID);
+                         ZonedDateTime mystartZDT;
+
+                         mystartZDT = ZonedDateTime.ofInstant(utcmStart.toInstant(), ZoneId.systemDefault());
+                         String mystartZDTstring = mystartZDT.format(formatter);
+
+                         Timestamp end = resultSet.getTimestamp("End");
+                         ZonedDateTime utcmEnd = end.toInstant().atZone(utcZoneID);
+                         ZonedDateTime myendZDT;
+                         myendZDT = ZonedDateTime.ofInstant(utcmEnd.toInstant(), ZoneId.systemDefault());
+                         String myendZDTstring = myendZDT.format(formatter);
+
+                         Alert alert = new Alert(Alert.AlertType.WARNING);
+                         if (Locale.getDefault().getLanguage().equals("fr")) {
+                             ResourceBundle rb = ResourceBundle.getBundle("sample/translt", Locale.getDefault());
+                             System.out.println("inside french alert");
+                             alert.setHeaderText(rb.getString("alertpart") + " " + appointmentID + " " +  rb.getString("alertpart2") + " " +  mystartZDTstring +
+                                    " " +  rb.getString("alertpart3") + " " + myendZDTstring);
+
+
+                         } else
+                             alert.setHeaderText("You have upcoming appointment! Appointment ID: " + appointmentID + " starting " + mystartZDTstring + " and ending " + myendZDTstring);
+                         alert.showAndWait();
+
+
+                     } while (resultSet.next());}}
+
               catch (Exception e){
 
                   System.err.println (e.getMessage());
@@ -129,18 +173,17 @@ public class LoginController implements Initializable  {
           }
           else
           {   Alert alert = new Alert(Alert.AlertType.ERROR);
-             // Locale.setDefault(new Locale("fr"));
-              ResourceBundle rb = ResourceBundle.getBundle("sample/translt", Locale.getDefault());
+
               if(Locale.getDefault().getLanguage().equals("fr"))
 
-              {
-                  alert.setHeaderText (rb.getString("alert.text"));
+              {    ResourceBundle rb = ResourceBundle.getBundle("sample/translt", Locale.getDefault());
+                  alert.setHeaderText(rb.getString("alert.text"));
 
               }
               else
               alert.setHeaderText("Please enter valid credentials!");
               alert.showAndWait();
-             // System.out.println("Enter valid credentials!");}
+
 
         }
 

@@ -30,7 +30,7 @@
               <columns>
                 <TableColumn fx:id="Customer_ID" prefWidth="75.0" text="ID" />
                 <TableColumn fx:id="Customer_Name" prefWidth="142.8000030517578" text="Name" />
-                <TableColumn fx:id="Address" prefWidth="240.39996337890625" text="Location" />
+                <TableColumn fx:id="Address" prefWidth="240.39996337890625" text="Address" />
                 <TableColumn fx:id="Postal_Code" prefWidth="130.0" text="Zip Code" />
                   <TableColumn fx:id="Phone" prefWidth="160.4000244140625" text="Phone" />
                   <TableColumn fx:id="CountryColumn" prefWidth="160.4000244140625" text="Country" />

@@ -54,7 +54,7 @@
                 <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                 <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                 <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
             <RowConstraints />
             <RowConstraints />
             </rowConstraints>
@@ -63,7 +63,7 @@
                 <Label text="Title" GridPane.rowIndex="1" />
                 <Label text="Description" GridPane.rowIndex="2" />
                 <Label text="Location" GridPane.rowIndex="3" />
-                <Label text="Contact ID" GridPane.rowIndex="4" />
+                <Label text="Contact Name" GridPane.rowIndex="4" />
                 <Label text="Type" GridPane.rowIndex="5" />
                 <Label text="Customer ID" GridPane.rowIndex="6" />
                 <Label text="UserID" GridPane.rowIndex="7" />
@@ -73,8 +73,8 @@
                 <TextField fx:id="locationTextfield" GridPane.columnIndex="1" GridPane.rowIndex="3" />
                 <TextField fx:id="contactTextfield" GridPane.columnIndex="1" GridPane.rowIndex="4" />
                 <TextField fx:id="typeTextfield" GridPane.columnIndex="1" GridPane.rowIndex="5" />
-                <TextField fx:id="customerTextfield" GridPane.columnIndex="1" GridPane.rowIndex="6" />
                 <TextField fx:id="userIdTextfield" GridPane.columnIndex="1" GridPane.rowIndex="7" />
+            <ComboBox prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="6" />
             </children>
         </GridPane>
       <VBox layoutX="527.0" layoutY="36.0" prefHeight="349.0" prefWidth="202.0" spacing="10.0">

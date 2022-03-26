@@ -9,10 +9,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Button;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
+import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.Stage;
 import sample.Model.Appointment;
@@ -28,6 +25,7 @@ import java.sql.*;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
+import java.util.Optional;
 import java.util.ResourceBundle;
 
 public class CustomersController implements Initializable {
@@ -76,7 +74,7 @@ public class CustomersController implements Initializable {
         Phone.setCellValueFactory(new PropertyValueFactory<Customer, String>("phoneNumber"));
         CountryColumn.setCellValueFactory(new PropertyValueFactory<Customer, String>("country"));
         DivisionColumn.setCellValueFactory(new PropertyValueFactory<Customer, String>("division"));
-        // DivisionIDColumn.setCellValueFactory(new PropertyValueFactory<Customer, Integer>("divisionId"));
+
 
         try {
             loadCustomers();
@@ -108,24 +106,39 @@ public class CustomersController implements Initializable {
     }
 
     public void deleteButtonPushed(ActionEvent event) throws SQLException {
-        System.out.println ("Delete pushed");
+
         if (TableCustomers.getSelectionModel().getSelectedItem() == null) {
-            System.out.println("Please select first!");
+            Alert alert = new Alert ( Alert.AlertType.WARNING);
+            alert.setHeaderText("Please select a customer to delete!");
+            alert.showAndWait();
         }
         else {
+            Alert confirm = new Alert ( Alert.AlertType.CONFIRMATION);
+           confirm.setHeaderText("Do you want to delete customer?");
+             Optional<ButtonType> result = confirm.showAndWait();
+            // alert.showAndWait();
+            if (result.get() == ButtonType.OK) {
 
             Customer customerDelete = TableCustomers.getSelectionModel().getSelectedItem();
             int customerID = customerDelete.getCustomerId();
 
             int rowsAffected = Query.checkForAppointments(customerID);
             if (rowsAffected > 0) {
-                System.out.println("Please delete appointment first!");
-            } else
+                Alert alert = new Alert ( Alert.AlertType.WARNING);
+                alert.setHeaderText("Please delete appointment first!");
+                alert.showAndWait();
+            } else {
+
                 Query.deleteCustomer(customerID);
+
+            Alert alert = new Alert (Alert.AlertType.INFORMATION);
+            alert.setContentText("Customer deleted");
+            alert.showAndWait();}
+
             TableCustomers.setItems(Query.selectCustomers());
         }
 
-    }
+    }}
 
     public void updateButtonPushed(ActionEvent event) throws IOException, SQLException {
         if (TableCustomers.getSelectionModel().getSelectedItem() == null){
@@ -134,14 +147,7 @@ public class CustomersController implements Initializable {
             alert.showAndWait();
         }
         else {
-/**
-            selectedCustomer = TableCustomers.getSelectionModel().getSelectedItem();
-            Stage stage;
-            Parent scene;
-            stage = (Stage) ((Button) event.getSource()).getScene().getWindow();
-            scene = FXMLLoader.load(getClass().getResource("/sample/View/updateCustomer.fxml"));
-            stage.setScene(new Scene(scene));
-            stage.show();*/
+
 
 FXMLLoader loader = new FXMLLoader();
             loader.setLocation(getClass().getResource("/sample/View/UpdateCustomer.fxml"));
