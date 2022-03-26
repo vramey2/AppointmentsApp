@@ -8,6 +8,7 @@ import sample.Model.Customer;
 import sample.Model.User;
 import sample.Model.UserLogged;
 
+import javax.xml.transform.Result;
 import java.sql.*;
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -23,23 +24,7 @@ public class Query {
 
     public Query() throws SQLException {
     }
-/**
-    public static boolean select(String userName, String password) throws SQLException {
-        String sql = " SELECT* FROM USERS WHERE User_Name = ? and Password = ?";
-        PreparedStatement ps = JDBC.connection.prepareStatement(sql);
-        ps.setString(1, userName);
-        ps.setString(2, password);
-        ResultSet rs = ps.executeQuery();
-        if (rs.next()) {
 
-            User newUser = new User (rs.getInt ("User_ID"), rs.getString ("User_Name"), rs.getString ("Password"));
-            return true;
-
-        } else
-            return false;
-    }
-
-*/
 
     public static int deleteCustomer(int customerID) throws SQLException {
 
@@ -50,8 +35,26 @@ public class Query {
         return rowsAffected;
     }
 
+public static int checkforOverlaps (int customerID, String startDate, String endDate) throws SQLException {
 
+    String sql = "SELECT Appointment_ID from APPOINTMENTS WHERE Customer_ID = ? AND (START BETWEEN ? AND ?) " +
+            "OR (END BETWEEN ? AND ?)" +
+            " or (START <   ? AND END  > ?)";
 
+    PreparedStatement ps = JDBC.connection.prepareStatement(sql);
+    ps.setInt (1, customerID);
+    ps.setString(2, startDate);
+    ps.setString(3, endDate);
+    ps.setString(4, startDate);
+    ps.setString(5, endDate);
+    ps.setString(6, startDate);
+    ps.setString(7, endDate);
+    ResultSet rs = ps.executeQuery();
+    int rowAffected = 0;
+    while (rs.next()){
+    rowAffected +=1;}
+return rowAffected;
+}
     public static int checkForAppointments(int customerID) throws SQLException {
 
         String sql = "SELECT Appointment_ID  FROM APPOINTMENTS WHERE Customer_ID = ? ";
@@ -66,6 +69,32 @@ public class Query {
         return rowsAffected;
 
 
+    }
+public static ObservableList <String> selectContacts() throws SQLException {
+        ObservableList <String> contacts = FXCollections.observableArrayList();
+        JDBC.openConnection();
+        String sql = "SELECT Contact_Name FROM contacts";
+        PreparedStatement ps = JDBC.connection.prepareStatement(sql);
+    ResultSet rs = ps.executeQuery();
+    while (rs.next()) {
+        String name = rs.getString("Contact_Name");
+        contacts.add(name);
+    }
+    return contacts;
+    }
+
+    public static Integer contactID(String contactName) throws SQLException{
+        Integer contactID = 0;
+        String sql = "SELECT Contact_ID FROM contacts WHERE Contact_Name = ?";
+        PreparedStatement ps = JDBC.connection.prepareStatement(sql);
+        ps.setString(1, contactName);
+        ResultSet resultSet = ps.executeQuery();
+        while (resultSet.next()) {
+         contactID = resultSet.getInt("Contact_ID");
+
+        }
+
+        return contactID;
     }
 
     public static ObservableList selectAppointments() throws SQLException, ParseException {

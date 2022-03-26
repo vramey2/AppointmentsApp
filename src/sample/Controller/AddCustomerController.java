@@ -30,7 +30,7 @@ public class AddCustomerController implements Initializable {
     public TextField customerAddressTextfield;
     public TextField postalCodeTextfield;
     public TextField phoneNumberTextfield;
-    public ComboBox selectCityCombobox;
+
     public Button saveButton;
     public Button cancelButton;
     public ComboBox selectDivisionCombobox;
@@ -42,14 +42,13 @@ public class AddCustomerController implements Initializable {
         customerIdTextfield.setEditable(false);
 
 
-
         selectCountryCombobox.setItems(selectCountryList);
 
         selectCountryCombobox.valueProperty().addListener((observableValue, o, t1) -> {
             String selectedCountry = (String) selectCountryCombobox.getValue();
-            System.out.println ("inside listener");
+            System.out.println("inside listener");
             int Country_ID;
-            if (selectedCountry ==  "U.S.")
+            if (selectedCountry == "U.S.")
                 Country_ID = 1;
             else if (selectedCountry == "UK")
                 Country_ID = 2;
@@ -61,68 +60,66 @@ public class AddCustomerController implements Initializable {
 
                 selectDivisionCombobox.setItems(Query.loadDivisions(Country_ID));
 
-                System.out.println (Country_ID);
+                System.out.println(Country_ID);
             } catch (SQLException throwables) {
                 throwables.printStackTrace();
             }
 
 
         });
-
-
     }
-    public void saveButtonPushed(ActionEvent event) throws SQLException, IOException {
 
-        String customerName = customerNameTextField.getText();
-        String customerAddress = customerAddressTextfield.getText();
-        String zipCode = postalCodeTextfield.getText();
-        String phoneNumber = phoneNumberTextfield.getText();
-        String division = (String) selectDivisionCombobox.getValue();
-        String country = (String) selectCountryCombobox.getValue();
-
-
-if (customerName.isEmpty() || customerAddress.isEmpty() || zipCode.isEmpty() || phoneNumber.isEmpty() ||
-        division == null|| country ==null) {
-    Alert alert = new Alert(Alert.AlertType.ERROR);
-    alert.setHeaderText("Please fill out all fields to enter customer!");
-    alert.showAndWait();
+        public void saveButtonPushed (ActionEvent event) throws SQLException, IOException {
+            System.out.println("inside save");
+            String customerName = customerNameTextField.getText();
+            String customerAddress = customerAddressTextfield.getText();
+            String zipCode = postalCodeTextfield.getText();
+            String phoneNumber = phoneNumberTextfield.getText();
+            String division = (String) selectDivisionCombobox.getValue();
+            String country = (String) selectCountryCombobox.getValue();
 
 
-}
-else {
+            if (customerName.isEmpty() || customerAddress.isEmpty() || zipCode.isEmpty() || phoneNumber.isEmpty() ||
+                    division == null || country == null) {
+                Alert alert = new Alert(Alert.AlertType.ERROR);
+                alert.setHeaderText("Please fill out all fields to enter customer!");
+                alert.showAndWait();
 
-    int rowsAffected = Query.insertCustomer(customerName, customerAddress, zipCode, phoneNumber, Query.DivisionID(division));
-    if (rowsAffected > 0) {
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setContentText("Customer Added!");
 
-        alert.showAndWait();
+            } else {
 
-        Stage stage = (Stage) ((Button) event.getSource()).getScene().getWindow();
-        Object scene = FXMLLoader.load(getClass().getResource("/sample/View/Customers.fxml"));
-        stage.setScene(new Scene((Parent) scene));
-        stage.show();
+                int rowsAffected = Query.insertCustomer(customerName, customerAddress, zipCode, phoneNumber, Query.DivisionID(division));
+                if (rowsAffected > 0) {
+                    Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                    alert.setContentText("Customer Added!");
+
+                    alert.showAndWait();
+
+                    Stage stage = (Stage) ((Button) event.getSource()).getScene().getWindow();
+                    Object scene = FXMLLoader.load(getClass().getResource("/sample/View/Customers.fxml"));
+                    stage.setScene(new Scene((Parent) scene));
+                    stage.show();
+                }
+            }
+
+
+        }
+
+
+        public void cancelButtonPushed (ActionEvent event) throws IOException {
+
+            Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+            alert.setContentText("Do you want to go back without saving?");
+            Optional<ButtonType> result = alert.showAndWait();
+            // alert.showAndWait();
+            if (result.get() == ButtonType.OK) {
+                Stage stage = (Stage) ((Button) event.getSource()).getScene().getWindow();
+                Object scene = FXMLLoader.load(getClass().getResource("/sample/View/Customers.fxml"));
+                stage.setScene(new Scene((Parent) scene));
+                stage.show();
+            }
+
+
+        }
     }
-}
-
-
-}
-
-
-
-    public void cancelButtonPushed(ActionEvent event) throws IOException {
-
-        Alert alert = new Alert (Alert.AlertType.CONFIRMATION);
-        alert.setContentText("Do you want to go back without saving?");
-        Optional<ButtonType> result = alert.showAndWait();
-         // alert.showAndWait();
-         if (result.get() == ButtonType.OK) {
-             Stage stage = (Stage) ((Button) event.getSource()).getScene().getWindow();
-             Object scene = FXMLLoader.load(getClass().getResource("/sample/View/Customers.fxml"));
-             stage.setScene(new Scene((Parent) scene));
-             stage.show();
-         }
-
-
-    }}
 
