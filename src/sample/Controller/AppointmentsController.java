@@ -99,8 +99,30 @@ public class AppointmentsController implements Initializable {
     }
 
 
-    public void updateButtonPushed(ActionEvent event) {
+    public void updateButtonPushed(ActionEvent event)throws IOException, SQLException
+    { if (appointmentsTable.getSelectionModel().getSelectedItem() == null){
+        Alert alert = new Alert ( Alert.AlertType.WARNING);
+        alert.setHeaderText("Please select an appointment to update!");
+        alert.showAndWait();
     }
+    else {
+
+
+        FXMLLoader loader = new FXMLLoader();
+        loader.setLocation(getClass().getResource("/sample/View/UpdateAppointment.fxml"));
+
+        Parent tableViewParent = loader.load();
+        Scene tableViewScene = new Scene(tableViewParent);
+        UpdateAppointmentController controller = loader.getController();
+
+        controller.populateData(appointmentsTable.getSelectionModel().getSelectedItem());
+
+        Stage window = (Stage) ((Node) event.getSource()).getScene().getWindow();
+        window.setScene(tableViewScene);
+        window.show();
+    }
+    }
+
 
     public void deleteButtonPushed(ActionEvent event) throws SQLException, ParseException {
 
@@ -113,9 +135,12 @@ public class AppointmentsController implements Initializable {
         else {
             Appointment appointmentDelete = appointmentsTable.getSelectionModel().getSelectedItem();
             int appointmentID = appointmentDelete.getId();
-
+            Alert alert = new Alert (Alert.AlertType.INFORMATION);
+            alert.setContentText("Deleted appointment ID: " + appointmentID +" type: " + Query.appointmentType(appointmentID));
+            alert.showAndWait();
 
             Query.deleteAppointment (appointmentID);
+
             appointmentsTable.setItems(Query.selectAppointments());
         }
 

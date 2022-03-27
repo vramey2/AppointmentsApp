@@ -20,7 +20,7 @@ import java.util.TimeZone;
 
 public class Query {
 
-  //  private static Object ZonedDateTime;
+    //  private static Object ZonedDateTime;
 
     public Query() throws SQLException {
     }
@@ -35,26 +35,28 @@ public class Query {
         return rowsAffected;
     }
 
-public static int checkforOverlaps (int customerID, String startDate, String endDate) throws SQLException {
+    public static int checkforOverlaps(int customerID, String startDate, String endDate) throws SQLException {
 
-    String sql = "SELECT Appointment_ID from APPOINTMENTS WHERE Customer_ID = ? AND (START BETWEEN ? AND ?) " +
-            "OR (END BETWEEN ? AND ?)" +
-            " or (START <   ? AND END  > ?)";
+        String sql = "SELECT Appointment_ID from APPOINTMENTS WHERE Customer_ID = ? AND (START BETWEEN ? AND ?) " +
+                "OR (END BETWEEN ? AND ?)" +
+                " or (START <   ? AND END  > ?)";
 
-    PreparedStatement ps = JDBC.connection.prepareStatement(sql);
-    ps.setInt (1, customerID);
-    ps.setString(2, startDate);
-    ps.setString(3, endDate);
-    ps.setString(4, startDate);
-    ps.setString(5, endDate);
-    ps.setString(6, startDate);
-    ps.setString(7, endDate);
-    ResultSet rs = ps.executeQuery();
-    int rowAffected = 0;
-    while (rs.next()){
-    rowAffected +=1;}
-return rowAffected;
-}
+        PreparedStatement ps = JDBC.connection.prepareStatement(sql);
+        ps.setInt(1, customerID);
+        ps.setString(2, startDate);
+        ps.setString(3, endDate);
+        ps.setString(4, startDate);
+        ps.setString(5, endDate);
+        ps.setString(6, startDate);
+        ps.setString(7, endDate);
+        ResultSet rs = ps.executeQuery();
+        int rowAffected = 0;
+        while (rs.next()) {
+            rowAffected += 1;
+        }
+        return rowAffected;
+    }
+
     public static int checkForAppointments(int customerID) throws SQLException {
 
         String sql = "SELECT Appointment_ID  FROM APPOINTMENTS WHERE Customer_ID = ? ";
@@ -70,31 +72,72 @@ return rowAffected;
 
 
     }
-public static ObservableList <String> selectContacts() throws SQLException {
-        ObservableList <String> contacts = FXCollections.observableArrayList();
+
+    public static ObservableList<String> selectContacts() throws SQLException {
+        ObservableList<String> contacts = FXCollections.observableArrayList();
         JDBC.openConnection();
         String sql = "SELECT Contact_Name FROM contacts";
         PreparedStatement ps = JDBC.connection.prepareStatement(sql);
-    ResultSet rs = ps.executeQuery();
-    while (rs.next()) {
-        String name = rs.getString("Contact_Name");
-        contacts.add(name);
-    }
-    return contacts;
+        ResultSet rs = ps.executeQuery();
+        while (rs.next()) {
+            String name = rs.getString("Contact_Name");
+            contacts.add(name);
+        }
+        return contacts;
     }
 
-    public static Integer contactID(String contactName) throws SQLException{
+    public static Integer contactID(String contactName) throws SQLException {
         Integer contactID = 0;
         String sql = "SELECT Contact_ID FROM contacts WHERE Contact_Name = ?";
         PreparedStatement ps = JDBC.connection.prepareStatement(sql);
         ps.setString(1, contactName);
         ResultSet resultSet = ps.executeQuery();
         while (resultSet.next()) {
-         contactID = resultSet.getInt("Contact_ID");
+            contactID = resultSet.getInt("Contact_ID");
 
         }
 
         return contactID;
+    }
+
+    public static String contactName (int contactID) throws SQLException {
+        String contactName = null;
+        String sql = "SELECT Contact_Name FROM contacts WHERE Contact_ID= ?";
+        PreparedStatement ps = JDBC.connection.prepareStatement(sql);
+        ps.setInt (1, contactID);
+        ResultSet resultSet = ps.executeQuery();
+        while (resultSet.next()) {
+            contactName = resultSet.getString("Contact_Name");
+
+        }
+
+        return contactName;
+    }
+
+    public static boolean customerExists(int customerId) throws SQLException {
+
+        int rowsAffected = 0;
+        String sql = "SELECT Customer_Name FROM customers Where Customer_ID = ?";
+        PreparedStatement ps = JDBC.connection.prepareStatement(sql);
+        ps.setInt(1, customerId);
+        ResultSet rs = ps.executeQuery();
+        while (rs.next()) {
+            rowsAffected += 1;
+        }
+        return (rowsAffected > 0);
+    }
+
+    public static boolean userExists(int userId) throws SQLException {
+
+        int rowsAffected = 0;
+        String sql = "SELECT User_Name FROM users Where User_ID = ?";
+        PreparedStatement ps = JDBC.connection.prepareStatement(sql);
+        ps.setInt(1, userId);
+        ResultSet rs = ps.executeQuery();
+        while (rs.next()) {
+            rowsAffected += 1;
+        }
+        return (rowsAffected > 0);
     }
 
     public static ObservableList selectAppointments() throws SQLException, ParseException {
@@ -110,7 +153,7 @@ public static ObservableList <String> selectContacts() throws SQLException {
             String location = rs.getString("Location");
             int contact = rs.getInt("Contact_ID");
             String type = rs.getString("Type");
-            Timestamp startDateTime= rs.getTimestamp("Start");
+            Timestamp startDateTime = rs.getTimestamp("Start");
 
             Timestamp endDateTime = rs.getTimestamp("End");
             int customerID = rs.getInt("Customer_ID");
@@ -119,22 +162,22 @@ public static ObservableList <String> selectContacts() throws SQLException {
             ZoneId utcZoneId = ZoneId.of("UTC");
 
 
-System.out.println (startDateTime + " timestamp");
-         ZoneId myZoneID = ZoneId.systemDefault();
+            System.out.println(startDateTime + " timestamp");
+            ZoneId myZoneID = ZoneId.systemDefault();
 
-            ZonedDateTime utcStartZDT = ZonedDateTime.ofInstant (startDateTime.toInstant(), utcZoneId);
-            ZonedDateTime utcEndZDT = ZonedDateTime.ofInstant (endDateTime.toInstant(), utcZoneId);
+            ZonedDateTime utcStartZDT = ZonedDateTime.ofInstant(startDateTime.toInstant(), utcZoneId);
+            ZonedDateTime utcEndZDT = ZonedDateTime.ofInstant(endDateTime.toInstant(), utcZoneId);
 
-            ZonedDateTime myStartDateTime = ZonedDateTime.ofInstant (utcStartZDT.toInstant(), myZoneID);
+            ZonedDateTime myStartDateTime = ZonedDateTime.ofInstant(utcStartZDT.toInstant(), myZoneID);
 
-          //  ZonedDateTime startToLocalInstat = utcStartZDT.withZoneSameInstant(myZoneID);
+            //  ZonedDateTime startToLocalInstat = utcStartZDT.withZoneSameInstant(myZoneID);
 
-          //  ZonedDateTime startLocal = startDateTime.toInstant().atZone(myZoneID);
+            //  ZonedDateTime startLocal = startDateTime.toInstant().atZone(myZoneID);
 
             ZonedDateTime myEndDateTime = ZonedDateTime.ofInstant(utcEndZDT.toInstant(), myZoneID);
-            String startTime = String.valueOf (myStartDateTime.toLocalTime());
-            String endTime = String.valueOf (myEndDateTime.toLocalTime());
-            String startDate = String.valueOf (myStartDateTime.toLocalDate());
+            String startTime = String.valueOf(myStartDateTime.toLocalTime());
+            String endTime = String.valueOf(myEndDateTime.toLocalTime());
+            String startDate = String.valueOf(myStartDateTime.toLocalDate());
             String endDate = String.valueOf(myEndDateTime.toLocalDate());
 
             String formattedStartDateTime = startTime + " " + startDate;
@@ -175,7 +218,7 @@ System.out.println (startDateTime + " timestamp");
             String address = resultSet.getString("Address");
 
             String country = resultSet.getString("Country");
-          //  String customerAddress = address + ", " + division + ", " + country;
+            //  String customerAddress = address + ", " + division + ", " + country;
             String customerAddress = address;
             Customer newCustomer = new Customer(customerID, customerName, customerAddress, zipCode, phoneNumber, country, division, divisionId);
             customers.add(newCustomer);
@@ -222,10 +265,24 @@ System.out.println (startDateTime + " timestamp");
         return countryID;
     }
 
+    public static String appointmentType(int appointmentID) throws SQLException {
+        String type = null;
 
 
-    public static ObservableList  <String> selectCountry(int Division_ID)throws SQLException{
-        ObservableList <String> selectCountry = FXCollections.observableArrayList();
+        String sql = "SELECT Type, Description from appointments WHERE Appointment_ID = ?";
+        PreparedStatement ps = JDBC.connection.prepareStatement(sql);
+        ps.setInt(1, appointmentID);
+        ResultSet rs = ps.executeQuery();
+        while (rs.next()) {
+            type = rs.getString("Type");
+
+
+        }
+        return type;
+    }
+
+    public static ObservableList<String> selectCountry(int Division_ID) throws SQLException {
+        ObservableList<String> selectCountry = FXCollections.observableArrayList();
         try {
             JDBC.openConnection();
 
@@ -249,8 +306,8 @@ System.out.println (startDateTime + " timestamp");
 
     //add customer to DB
     public static int insertCustomer(String customerName, String customerAddress, String zipCode, String phoneNumber,
-                                        int divisionId)
-      throws SQLException {
+                                     int divisionId)
+            throws SQLException {
 
         String sql = "INSERT INTO CUSTOMERS (Customer_Name,  Address, Postal_Code, Phone, Create_Date, Created_by, Last_Update, Last_Updated_By, Division_ID ) VALUES (?, ?, ?, ?,  ?, ?, ?, ?, ?)";
         PreparedStatement ps = JDBC.connection.prepareStatement(sql);
@@ -259,7 +316,7 @@ System.out.println (startDateTime + " timestamp");
         ps.setString(3, zipCode);
         ps.setString(4, phoneNumber);
         ps.setString(5, Utility.utcTimeNow());
-        ps.setString (6, UserLogged.getSignedName());
+        ps.setString(6, UserLogged.getSignedName());
         ps.setString(7, Utility.utcTimeNow());
         ps.setString(8, UserLogged.getSignedName());
         ps.setInt(9, divisionId);
@@ -270,6 +327,7 @@ System.out.println (startDateTime + " timestamp");
 
 
     }
+
     //update customer in DB
     public static int updateCustomer(String customerName, String customerAddress, String zipCode, String phoneNumber,
                                      int divisionId, int customerID)
@@ -284,7 +342,7 @@ System.out.println (startDateTime + " timestamp");
         ps.setString(5, Utility.utcTimeNow());
         ps.setString(6, UserLogged.getSignedName());
         ps.setInt(7, divisionId);
-       // ps.setString(6, Utility.utcTimeNow());
+
         ps.setInt(8, customerID);
 
         int rowsAffected = ps.executeUpdate();
@@ -292,6 +350,28 @@ System.out.println (startDateTime + " timestamp");
 
 
     }
+
+    public static int updateAppointment(String title, String description, String location, String type, String startDT, String endDT, int customerID, int userID, int contactID, int appointmentID) throws SQLException {
+
+
+    String sql = "Update appointments SET Title = ?, Description = ?, Location = ?, Type = ?, Start = ?, End = ?, Customer_ID = ?, User_ID = ?, Contact_ID = ?, Last_Update = ?, Last_Updated_By = ? Where Appointment_ID = ?";
+    PreparedStatement ps =JDBC.connection.prepareStatement(sql);
+    ps.setString(1, title);
+    ps.setString(2, description);
+    ps.setString(3, location);
+    ps.setString(4, type);
+    ps.setString(5, startDT);
+    ps.setString(6, endDT);
+    ps.setInt(7, customerID);
+    ps.setInt(8, userID);
+    ps.setInt(9, contactID);
+    ps.setString(10, Utility.utcTimeNow());
+    ps.setString(11,  UserLogged.getSignedName());
+    ps.setInt(12, appointmentID);
+
+    int rowsAffected = ps.executeUpdate();
+    return rowsAffected;
+}
 
     public static ObservableList <String> loadDivisions(int Country_ID) throws SQLException
 
@@ -356,13 +436,13 @@ System.out.println (startDateTime + " timestamp");
         return allDivisions;
     }
 
-    //add customer to DB
+    //add appointment to DB
     public static int insertAppointment  ( String title, String description,  String location, String type,
                                           String startDateTime, String endDateTime, int customerID, int userID, int contact )
             throws SQLException {
 
-        String sql = "INSERT INTO APPOINTMENTS (Title, Description, Location, Type, Start, End, Customer_ID, User_ID, Contact_ID)" +
-                "VALUES ( ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO APPOINTMENTS (Title, Description, Location, Type, Start, End,Last_Update, Last_Updated_By, Customer_ID, User_ID, Contact_ID)" +
+                "VALUES ( ?, ?, ?, ?, ?, ?, ?, ?, ?, ? ,?)";
         PreparedStatement ps = JDBC.connection.prepareStatement(sql);
         ps.setString(1, title);
         ps.setString(2,description);
@@ -371,9 +451,11 @@ System.out.println (startDateTime + " timestamp");
         ps.setString(4, type);
         ps.setString(5, startDateTime);
         ps.setString (6, endDateTime);
-        ps.setInt (7, customerID);
-        ps.setInt (8, userID);
-        ps.setInt(9, contact);
+        ps.setString(7, Utility.utcTimeNow());
+        ps.setString(8, UserLogged.getSignedName());
+        ps.setInt (9, customerID);
+        ps.setInt (10, userID);
+        ps.setInt(11, contact);
 
 
 

@@ -170,11 +170,24 @@ try {
                 alert.setHeaderText("Cannot schedule outside business hours!");
                 alert.showAndWait();
             } else if (title.isEmpty() || description.isEmpty() || location.isEmpty() || type.isEmpty()
-            || customerTextfield.getText().isEmpty() || customerTextfield.getText().isEmpty() || contactName == null  ) {
+            || customerTextfield.getText().isEmpty() || userIdTextfield.getText().isEmpty() || contactName == null  ) {
               Utility.displayErrorAlert();
 
             }
+            else if (!Query.customerExists(customerID)){
 
+                Alert alert = new Alert(Alert.AlertType.ERROR);
+                alert.setContentText("Please enter existing customer ID or add a new customer first");
+                alert.showAndWait();
+
+    }
+            else if (!Query.userExists(userID)){
+
+                Alert alert = new Alert(Alert.AlertType.ERROR);
+                alert.setContentText("Please enter existing user ID!");
+                alert.showAndWait();
+
+            }
             else  {
                 int overlapps = Query.checkforOverlaps(customerID, startDT, endDT);
                 if (overlapps > 0){
