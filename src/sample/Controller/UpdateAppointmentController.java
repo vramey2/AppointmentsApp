@@ -138,7 +138,7 @@ public class UpdateAppointmentController implements Initializable {
             }
             else  {
                 int overlapps = Query.checkforOverlaps(customerID, startDT, endDT);
-                if (overlapps > 0){
+                if (overlapps > 0  ){
                     Alert alert = new Alert (Alert.AlertType.ERROR);
                     alert.setContentText("Appointment overlapps with a different appointment!");
                     alert.showAndWait();
@@ -148,7 +148,7 @@ public class UpdateAppointmentController implements Initializable {
                     int rowsAffected = Query.updateAppointment(title, description, location, type, startDT, endDT, customerID, userID, Query.contactID(contactName), appointmentID);
                     if (rowsAffected > 0) {
                         Alert alert = new Alert(Alert.AlertType.INFORMATION);
-                        alert.setContentText("Appointment Added!");
+                        alert.setContentText("Appointment Updated!");
 
                         alert.showAndWait();
 

@@ -544,7 +544,7 @@ public class Query {
 
    }
 
-    public static <LodalDate> ObservableList selectPreviousWeeklyAppointments() throws SQLException, ParseException {
+    public static ObservableList selectPreviousWeeklyAppointments(int count) throws SQLException, ParseException {
         ObservableList<Appointment> appByPrevWeek = FXCollections.observableArrayList();
         LocalDateTime myLDT = LocalDateTime.now();
         System.out.println(myLDT + " my time now");
@@ -555,8 +555,9 @@ public class Query {
         ZonedDateTime utcZDT = ZonedDateTime.ofInstant(myZDT.toInstant(), utcZoneId);
         System.out.println(utcZDT + "my time now in UTC");
         LocalDateTime localUTC = utcZDT.toLocalDateTime();
+        localUTC = localUTC.minusWeeks(count);
         System.out.println (localUTC + " local UTC DATE TIME");
-        LocalDateTime localWeekPrev = localUTC.minusHours(168);
+        LocalDateTime localWeekPrev = localUTC.minusWeeks(count + 1);
         System.out.println (localWeekPrev+ "minus week");
 
         String sql = "SELECT Appointment_ID, Title, Description, Location, Type, Contact_ID, Start, End, Customer_ID, User_ID from  APPOINTMENTS WHERE Start between ? and  ?";

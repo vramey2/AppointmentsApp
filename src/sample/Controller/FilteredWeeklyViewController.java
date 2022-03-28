@@ -73,22 +73,15 @@ public class FilteredWeeklyViewController implements Initializable {
             }
             appointmentsWeeklyTable.getItems().addAll(appByWeek);
         }
-
-public void loadPrevWeeklyAppointments () throws SQLException
+    int count = 0;
+public void loadPrevWeeklyAppointments (int count) throws SQLException
 
     {
         ObservableList<Appointment> appPrevByWeek = FXCollections.observableArrayList();
-   /**     ObservableList <Appointment> visibleAppointments = FXCollections.observableArrayList();
-        visibleAppointments = appointmentsWeeklyTable.getItems();
-        LocalDateTime startDT;
-        while (visibleAppointments.iterator().hasNext()){
 
-
-
-        }*/
         try {
             JDBC.openConnection();
-            appPrevByWeek = Query.selectPreviousWeeklyAppointments();
+            appPrevByWeek = Query.selectPreviousWeeklyAppointments(count);
 
         } catch (Exception e) {
 
@@ -98,15 +91,15 @@ public void loadPrevWeeklyAppointments () throws SQLException
 
     }
 
-    public void prevWeekButtonPushed(ActionEvent event) throws IOException {
-         
+    public int prevWeekButtonPushed(ActionEvent event) throws IOException {
+         count ++;
         try {
-            loadPrevWeeklyAppointments();
+            loadPrevWeeklyAppointments( count);
         } catch (SQLException e) {
 
             System.out.println(e.getMessage());
         }
-
+return count;
         }
 
     public void loadNextWeeklyAppointments () throws SQLException

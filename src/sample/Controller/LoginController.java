@@ -16,7 +16,10 @@ import sample.Model.UserLogged;
 import sample.helper.JDBC;
 import sample.helper.Query;
 
+import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.net.URL;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -62,8 +65,31 @@ public class LoginController implements Initializable  {
         String userName = Userloginname.getText();
         String password = Password.getText();
 
+
+
         if (userName.isEmpty() || password.isEmpty()){
-            Alert alert = new Alert(Alert.AlertType.ERROR);
+
+            if (!userName.isEmpty()){
+
+
+                String myFile = "login_activity.txt";
+                File login_activity = new File (myFile);
+                if (!login_activity.exists()) {
+                    PrintWriter pw = new PrintWriter("login_activity.txt");
+                    pw.append(userName + " " + ZonedDateTime.now() + " failed to log in" + "\n");
+                    pw.close();
+                }
+                else {
+                    FileWriter fw = new FileWriter("login_activity.txt", true);
+                    fw.append(userName + " " + ZonedDateTime.now() + "  failed to log in" + "\n");
+                    fw.close();
+
+                }
+
+
+            }
+
+             Alert alert = new Alert (Alert.AlertType.ERROR);
 
             if(Locale.getDefault().getLanguage().equals("fr"))
 
@@ -81,7 +107,39 @@ public class LoginController implements Initializable  {
         {
             JDBC.openConnection();
           boolean validate =  UserLogged.select(userName, password);
-          if (validate) {
+            // insert here method to logger
+
+            String myFile = "login_activity.txt";
+
+            File login_activity = new File (myFile);
+
+            if (!login_activity.exists()) {
+
+                PrintWriter pw = new PrintWriter("login_activity.txt");
+                if (validate) {
+                    pw.append(userName + " " + ZonedDateTime.now() + " successfully logged in" + "\n");
+                    pw.append("\n");}
+
+                else
+                    pw.append(userName + " " + ZonedDateTime.now() + " failed to log in" + "\n");
+                pw.close();
+
+            }
+            else {
+                FileWriter fw = new FileWriter("login_activity.txt", true);
+
+                if (validate) {
+                    fw.append(userName + " " + ZonedDateTime.now() + " successfully logged in" + "\n");
+                    fw.append("\n");
+
+                } else {
+                    fw.append(userName + " " + ZonedDateTime.now() + "  failed to log in" + "\n");
+
+                }
+                fw.close();
+            }
+
+            if (validate) {
               System.out.println("Success!");
 
 
@@ -96,7 +154,10 @@ public class LoginController implements Initializable  {
               String utcStart = utcZDT.format(formatter);
               String utcEnd =  utcZDT.plusMinutes(15).format(formatter);
 
-              try {
+
+
+
+                  try {
                   JDBC.openConnection();
                   System.out.println("inside try");
                   String sql = "SELECT Appointment_ID, Start, End from appointments WHERE Start BETWEEN ? AND ? ";
@@ -185,9 +246,6 @@ public class LoginController implements Initializable  {
               alert.showAndWait();
 
 
-        }
+        }}
 
-
-
-    }
 }}

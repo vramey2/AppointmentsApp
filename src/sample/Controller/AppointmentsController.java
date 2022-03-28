@@ -76,7 +76,7 @@ public class AppointmentsController implements Initializable {
             endColumn.setCellValueFactory(new PropertyValueFactory<Appointment, String>("endString"));
             customerIdColumn.setCellValueFactory(new PropertyValueFactory<Appointment, Integer>("customerID"));
             userIdColumn.setCellValueFactory(new PropertyValueFactory<Appointment, Integer>("userID"));
-            previousButton.setVisible(false);
+
 
             try {
                 loadAppointments();
@@ -165,7 +165,7 @@ public class AppointmentsController implements Initializable {
 
         try {
             appointmentsTable.setItems(Query.selectMonthlyAppointments());
-            previousButton.setVisible(true);
+           // previousButton.setVisible(true);
         } catch (SQLException | ParseException e) {
 
             System.out.println(e.getMessage());
@@ -174,9 +174,7 @@ public class AppointmentsController implements Initializable {
 
 
     public void viewByWeekSelected(ActionEvent event) throws IOException {
-    /**    Stage stage;
-        Parent scene;
-        stage = (Stage) ((Button) event.getSource()).getScene().getWindow();*/
+    /**
 Parent tableParent = FXMLLoader.load(getClass().getResource("/sample/View/filteredWeeklyAppView.fxml"));
 Scene newScene = new Scene(tableParent);
 
@@ -185,7 +183,14 @@ window.setScene(newScene);
 window.show();
 
 
+*/
+    try {
+        appointmentsTable.setItems(Query.selectWeeklyAppointments());
+    }
+    catch (SQLException | ParseException e){
 
+        System.out.println (e.getMessage());
+    }
     }
 }
 
