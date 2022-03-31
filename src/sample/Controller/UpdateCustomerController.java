@@ -99,8 +99,15 @@ public class UpdateCustomerController implements Initializable {
         //  int divisionId = Query.DivisionID(division);
        int customerId = Integer.parseInt (customerUpdIdTextfield.getText());
 
+       if (customerName.isEmpty() || customerAddress.isEmpty() || zipCode.isEmpty() || phoneNumber.isEmpty() ||
+               division == null ) {
+           Alert alert = new Alert(Alert.AlertType.ERROR);
+           alert.setHeaderText("Please fill out all fields to enter customer!");
+           alert.showAndWait();
+       }
+       else {
 
-        int rowsAffected =  Query.updateCustomer(customerName, customerAddress, zipCode, phoneNumber, Query.DivisionID(division), customerId);
+           int rowsAffected =  Query.updateCustomer(customerName, customerAddress, zipCode, phoneNumber, Query.DivisionID(division), customerId);
         if (rowsAffected >0){
             Alert alert = new Alert (Alert.AlertType.INFORMATION);
             alert.setContentText("Customer Updated!");
@@ -111,7 +118,7 @@ public class UpdateCustomerController implements Initializable {
             Object scene = FXMLLoader.load(getClass().getResource("/sample/View/Customers.fxml"));
             stage.setScene(new Scene((Parent) scene));
             stage.show();
-        }
+        }}
     }
 
 

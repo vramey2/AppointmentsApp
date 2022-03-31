@@ -1,5 +1,7 @@
 package sample.Controller;
 
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -136,9 +138,15 @@ public class UpdateAppointmentController implements Initializable {
                 alert.showAndWait();
 
             }
+            else if (localStartDateTime.isAfter(localEndDateTime)){
+                Alert alert= new Alert (Alert.AlertType.ERROR);
+                alert.setContentText ("Appointment start time cannnot be after end time!");
+                alert.showAndWait();
+            }
+
             else  {
-                int overlapps = Query.checkforOverlaps(customerID, startDT, endDT);
-                if (overlapps > 0  ){
+                ObservableList<Integer> overlapID =  Query.checkforOverlaps(customerID, startDT, endDT);
+                if (overlapID.size() > 1 && !overlapID.isEmpty()){
                     Alert alert = new Alert (Alert.AlertType.ERROR);
                     alert.setContentText("Appointment overlapps with a different appointment!");
                     alert.showAndWait();
@@ -228,13 +236,14 @@ public class UpdateAppointmentController implements Initializable {
         System.out.println (hours);
         System.out.println (minutes);
         Timestamp endDate = selectedAppointment.getEndDateTime();
-        ZonedDateTime utcEndZDT = ZonedDateTime.of (endDate.toLocalDateTime(), utcZoneId);
+        ZonedDateTime utcEndZDT = ZonedDateTime.ofInstant (endDate.toInstant (), utcZoneId);
         ZonedDateTime myEndZDT = ZonedDateTime.ofInstant(utcEndZDT.toInstant(), ZoneId.systemDefault());
         String endDateUpd = String.valueOf(myEndZDT.toLocalDate());
         endDTUpd.setValue(LocalDate.parse(endDateUpd));
         String endTimeUpd = String.valueOf((myEndZDT.toLocalTime()));
         String [] parts = endTimeUpd.split (":");
         String endHours = parts[0];
+        System.out.println (endHours + " end hours");
         String endMinutes = parts [1];
         SpinnerValueFactory <Integer> starthourValueFactory = new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 23, Integer.parseInt(hours));
         this.hourStartSpinneUpd.setValueFactory(starthourValueFactory);

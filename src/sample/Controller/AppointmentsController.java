@@ -47,6 +47,7 @@ public class AppointmentsController implements Initializable {
     public RadioButton viewByMonthRadio;
     public RadioButton viewByWeekRadio;
     public Label previousButton;
+    public Button generateReportsButton;
     // private EventQueueItem Node;
 
     public void loadAppointments() throws SQLException {
@@ -174,16 +175,7 @@ public class AppointmentsController implements Initializable {
 
 
     public void viewByWeekSelected(ActionEvent event) throws IOException {
-    /**
-Parent tableParent = FXMLLoader.load(getClass().getResource("/sample/View/filteredWeeklyAppView.fxml"));
-Scene newScene = new Scene(tableParent);
 
-Stage window = (Stage)((Node) event.getSource()).getScene().getWindow();
-window.setScene(newScene);
-window.show();
-
-
-*/
     try {
         appointmentsTable.setItems(Query.selectWeeklyAppointments());
     }
@@ -191,6 +183,13 @@ window.show();
 
         System.out.println (e.getMessage());
     }
+    }
+
+    public void generateReportsButtonPushed(ActionEvent event) throws IOException {
+        Stage stage = (Stage) ((Button) event.getSource()).getScene().getWindow();
+        Object scene = FXMLLoader.load(getClass().getResource("/sample/View/reports.fxml"));
+        stage.setScene(new Scene((Parent) scene));
+        stage.show();
     }
 }
 

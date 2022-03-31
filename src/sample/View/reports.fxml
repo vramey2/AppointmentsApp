@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+<AnchorPane prefHeight="536.0" prefWidth="649.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.Controller.ReportsController">
+   <children>
+      <VBox prefHeight="200.0" prefWidth="287.0" spacing="10.0">
+         <children>
+            <Label prefHeight="20.0" prefWidth="201.0" text="Appointments by Month">
+               <font>
+                  <Font name="System Bold" size="14.0" />
+               </font>
+            </Label>
+            <TableView fx:id="countByMonth" prefHeight="159.0" prefWidth="369.0">
+              <columns>
+                <TableColumn fx:id="yearColumn" prefWidth="75.0" text="Year" />
+                <TableColumn fx:id="monthColumn" prefWidth="75.0" text="Month" />
+                  <TableColumn fx:id="countColumn" prefWidth="75.0" text="Count" />
+              </columns>
+               <VBox.margin>
+                  <Insets right="10.0" />
+               </VBox.margin>
+            </TableView>
+         </children>
+         <padding>
+            <Insets left="10.0" top="10.0" />
+         </padding>
+      </VBox>
+      <VBox layoutX="308.0" layoutY="44.0" prefHeight="159.0" prefWidth="239.0">
+         <children>
+            <TableView fx:id="typeByMonthTable" prefHeight="200.0" prefWidth="200.0">
+              <columns>
+                <TableColumn fx:id="typeColumn" prefWidth="122.199951171875" text="Type" />
+                  <TableColumn fx:id="monthByTypeColumn" prefWidth="64.20001220703125" text="Month" />
+                  <TableColumn fx:id="totalColumn" prefWidth="40.200042724609375" text="Total" />
+              </columns>
+            </TableView>
+         </children>
+      </VBox>
+      <Label layoutX="324.0" layoutY="14.0" prefHeight="18.0" prefWidth="213.0" text="Appointment Types by Month">
+         <font>
+            <Font name="System Bold" size="14.0" />
+         </font>
+      </Label>
+      <VBox layoutX="14.0" layoutY="246.0" prefHeight="143.0" prefWidth="560.0">
+         <children>
+            <ComboBox fx:id="selectContactCombo" prefHeight="26.0" prefWidth="244.0" promptText="Select Contact to View Schedule" />
+         </children>
+      </VBox>
+      <TableView fx:id="contactScheduleTable" layoutX="14.0" layoutY="289.0" prefHeight="104.0" prefWidth="629.0">
+        <columns>
+          <TableColumn fx:id="appIdColumn" prefWidth="75.0" text="App ID" />
+          <TableColumn fx:id="titleColumn" prefWidth="75.0" text="Title" />
+            <TableColumn fx:id="typeContColumn" prefWidth="75.0" text="Type" />
+            <TableColumn fx:id="descriptionColumn" prefWidth="75.0" text="Description" />
+            <TableColumn fx:id="startColumn" prefWidth="97.20001220703125" text="Start Date/Time" />
+            <TableColumn fx:id="endColumn" prefWidth="117.80001831054688" text="End Date/Time" />
+            <TableColumn fx:id="customerIdColumn" prefWidth="101.0" text="Customer ID" />
+        </columns>
+      </TableView>
+      <VBox layoutX="14.0" layoutY="431.0" prefHeight="159.0" prefWidth="333.0" spacing="10.0">
+         <children>
+            <Label text="Customers by Country">
+               <font>
+                  <Font name="System Bold" size="14.0" />
+               </font>
+            </Label>
+            <TableView fx:id="custByCountryTrable" prefHeight="119.0" prefWidth="331.0">
+              <columns>
+                <TableColumn fx:id="countryColumn" prefWidth="158.1999969482422" text="Country" />
+                <TableColumn fx:id="totalPerCountry" prefWidth="157.79998779296875" text="Number of Customers" />
+              </columns>
+            </TableView>
+         </children>
+         <padding>
+            <Insets bottom="10.0" />
+         </padding>
+      </VBox>
+   </children>
+</AnchorPane>

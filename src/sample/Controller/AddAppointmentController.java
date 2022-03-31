@@ -174,6 +174,11 @@ try {
               Utility.displayErrorAlert();
 
             }
+            else if (localStartDateTime.isAfter(localEndDateTime)){
+                Alert alert= new Alert (Alert.AlertType.ERROR);
+                alert.setContentText ("Appointment start time cannnot be after end time!");
+                alert.showAndWait();
+            }
             else if (!Query.customerExists(customerID)){
 
                 Alert alert = new Alert(Alert.AlertType.ERROR);
@@ -189,8 +194,9 @@ try {
 
             }
             else  {
-                int overlapps = Query.checkforOverlaps(customerID, startDT, endDT);
-                if (overlapps > 0){
+                ObservableList<Integer> overlapID = FXCollections.observableArrayList();
+               overlapID = Query.checkforOverlaps(customerID, startDT, endDT);
+                if (!overlapID.isEmpty()){
                     Alert alert = new Alert (Alert.AlertType.ERROR);
                     alert.setContentText("Appointment overlapps with a different appointment!");
                     alert.showAndWait();

@@ -7,7 +7,7 @@
 
 <AnchorPane prefHeight="400.0" prefWidth="1090.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.Controller.AppointmentsController">
    <children>
-      <VBox layoutY="27.0" prefHeight="345.0" prefWidth="972.0">
+      <VBox layoutY="8.0" prefHeight="365.0" prefWidth="1027.0" spacing="20.0">
          <opaqueInsets>
             <Insets />
          </opaqueInsets>
@@ -36,7 +36,7 @@
                      </padding></HBox>
                </children>
                </HBox>
-            <TableView fx:id="appointmentsTable" prefHeight="248.0" prefWidth="942.0">
+            <TableView fx:id="appointmentsTable" prefHeight="297.0" prefWidth="997.0">
               <columns>
                   <TableColumn fx:id="appointment_ID" prefWidth="30.40000855922699" text="ID" />
                   <TableColumn fx:id="titleColumn" prefWidth="91.19998550415039" text="Title" />
@@ -50,9 +50,9 @@
                   <TableColumn fx:id="userIdColumn" prefWidth="56.800048828125" text="User_ID" />
               </columns>
             </TableView>
-            <VBox prefHeight="123.0" prefWidth="850.0">
+            <VBox prefHeight="123.0" prefWidth="850.0" spacing="20.0">
                <children>
-                  <HBox alignment="TOP_RIGHT" prefHeight="57.0" prefWidth="942.0" spacing="10.0">
+                  <HBox alignment="TOP_RIGHT" prefHeight="124.0" prefWidth="942.0" spacing="10.0">
                      <children>
                         <Label fx:id="previousButton" text="Previous" />
                         <Button fx:id="addAppButton" mnemonicParsing="false" onAction="#addAppButtonPushed" text="Add" />
@@ -66,8 +66,15 @@
                         <Insets left="20.0" right="20.0" top="20.0" />
                      </padding>
                   </HBox>
-               </children></VBox>
-            <Button fx:id="goBackButton" mnemonicParsing="false" onAction="#goBackPushed" text="Go back to Customers view" />
+               </children>
+               <VBox.margin>
+                  <Insets />
+               </VBox.margin></VBox>
+         </children></VBox>
+      <VBox layoutX="20.0" layoutY="386.0" prefHeight="143.0" prefWidth="200.0" spacing="20.0">
+         <children>
+            <Button fx:id="goBackButton" mnemonicParsing="false" onAction="#goBackPushed" prefHeight="26.0" prefWidth="171.0" text="Go back to Customers view" />
+            <Button fx:id="generateReportsButton" mnemonicParsing="false" onAction="#generateReportsButtonPushed" text="Generate Reports" />
          </children></VBox>
    </children>
 </AnchorPane>
