@@ -1,6 +1,5 @@
 package sample.Controller;
 
-import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXMLLoader;
@@ -10,8 +9,8 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.stage.Stage;
 import sample.Model.Appointment;
-import sample.Model.Customer;
 import sample.helper.Query;
+import sample.helper.QueryAppointment;
 
 import java.io.IOException;
 import java.net.URL;
@@ -47,9 +46,7 @@ public class UpdateAppointmentController implements Initializable {
         try {
 
             String title = titleUpdTextField.getText();
-
             String description = descriptionUpdTextfield.getText();
-
             String location = locationUpdTextfield.getText();
             String type = typeUpdTextfield.getText();
             int customerID = Integer.parseInt(customerUpdTextfield.getText());
@@ -75,90 +72,50 @@ public class UpdateAppointmentController implements Initializable {
             if (endMinute.length() == 1)
                 endMinute = "0" + endMinute;
 
-            String endTime = endHour + ":" + endMinute;
-            String startTime = startHour + ":" + startMinute;
-            ZoneId myZDoneId = ZoneId.systemDefault();
-            DateTimeFormatter parser = DateTimeFormatter.ofPattern("HH:mm");
-            LocalTime localStartTime = LocalTime.parse(startTime, parser);
-            LocalDateTime localStartDateTime = LocalDateTime.of(startdt, localStartTime);
-            LocalTime localEndTime = LocalTime.parse(endTime, parser);
-
-            LocalDateTime localEndDateTime = LocalDateTime.of(enddt, localEndTime);
-            ZonedDateTime startmyZDT = ZonedDateTime.of(LocalDateTime.from(localStartDateTime), myZDoneId);
-            ZonedDateTime endmyZDT = ZonedDateTime.of(LocalDateTime.from(localEndDateTime), myZDoneId);
-            ZoneId utcZneId = ZoneId.of("UTC");
-            ZonedDateTime utcStartZDT = ZonedDateTime.ofInstant(startmyZDT.toInstant(), utcZneId);
-            ZonedDateTime utcEndZDT = ZonedDateTime.ofInstant(endmyZDT.toInstant(), utcZneId);
-            String startDate = String.valueOf(utcStartZDT.toLocalDate());
-            String startUTCTime = String.valueOf((utcStartZDT.toLocalTime()));
-            String startDT = startDate + " " + startUTCTime;
-            String endDate = String.valueOf(utcEndZDT.toLocalDate());
-            String endutcTime = String.valueOf(utcEndZDT.toLocalTime());
-            String endDT = endDate + " " + endutcTime;
-
-            //convert to est to validate
-            ZoneId estZoneId = ZoneId.of("America/New_York");
-            ZonedDateTime estStartZDT = ZonedDateTime.ofInstant(utcStartZDT.toInstant(), estZoneId);
-            ZonedDateTime estEndZDT = ZonedDateTime.ofInstant(utcEndZDT.toInstant(), estZoneId);
-            System.out.println("est start zdt: " + estStartZDT);
-            System.out.println("est end zdt: " + estEndZDT);
-//compare input to business hours for overlap
-            LocalTime startEST = estStartZDT.toLocalTime();
-            LocalTime endEST = estEndZDT.toLocalTime();
-            LocalDate dateSEST = estStartZDT.toLocalDate();
-            LocalDate dateEEST = estEndZDT.toLocalDate();
-            DayOfWeek dayStart = DayOfWeek.of(dateSEST.get(ChronoField.DAY_OF_WEEK));
+            String startDT = Utility.convertTime(startHour, startMinute, startdt);
+            String endDT = Utility.convertTime (endHour, endMinute, enddt);
+            ZonedDateTime utcStartZDT = Utility.convertUTCTime(startHour, startMinute, startdt);
+            ZonedDateTime utcEndZDT = Utility.convertUTCTime (endHour, endMinute, enddt);
 
 
-            DayOfWeek dayEnd = DayOfWeek.of(dateEEST.get(ChronoField.DAY_OF_WEEK));
-            LocalTime businessStart = LocalTime.of(8, 00);
-            LocalTime busienssEnd = LocalTime.of(22, 00);
-            if (startEST.isAfter(busienssEnd) || startEST.isBefore(businessStart) || (endEST.isAfter(busienssEnd)
-                    || endEST.isBefore(businessStart)) || dayStart.equals(DayOfWeek.SATURDAY) ||dayStart.equals(DayOfWeek.SUNDAY)
-                    || dayEnd.equals(DayOfWeek.SATURDAY) || dayEnd.equals(DayOfWeek.SUNDAY)) {
-                Alert alert = new Alert(Alert.AlertType.WARNING);
-                alert.setHeaderText("Cannot schedule outside business hours!");
-                alert.showAndWait();
+//check why utc time ?
+                if (Utility.validateBusinessHours(utcStartZDT, utcEndZDT)){
+                    Utility.displayWarning(4);
+
             } else if (title.isEmpty() || description.isEmpty() || location.isEmpty() || type.isEmpty()
                     || customerUpdTextfield.getText().isEmpty() || userIdUpdTextfield.getText().isEmpty() || contactName == null  ) {
-                Utility.displayErrorAlert();
+                Utility.displayErrorAlert(1);
 
             }
-            else if (!Query.customerExists(customerID)){
-
-                Alert alert = new Alert(Alert.AlertType.ERROR);
-                alert.setContentText("Please enter existing customer ID or add a new customer first");
-                alert.showAndWait();
+            else if (Query.customerExists(customerID)){
+                Utility.displayErrorAlert(7);
 
             }
-            else if (!Query.userExists(userID)){
+            else if (Query.userExists(userID)){
 
-                Alert alert = new Alert(Alert.AlertType.ERROR);
-                alert.setContentText("Please enter existing user ID!");
-                alert.showAndWait();
+                Utility.displayErrorAlert (8);
 
             }
-            else if (localStartDateTime.isAfter(localEndDateTime)){
-                Alert alert= new Alert (Alert.AlertType.ERROR);
-                alert.setContentText ("Appointment start time cannnot be after end time!");
-                alert.showAndWait();
+
+            else if (utcStartZDT.isAfter(utcEndZDT)){
+                Utility.displayErrorAlert (2);
+
             }
 
             else  {
-                ObservableList<Integer> overlapID =  Query.checkforOverlaps(customerID, startDT, endDT);
-                if (overlapID.size() > 1 && !overlapID.isEmpty()){
-                    Alert alert = new Alert (Alert.AlertType.ERROR);
-                    alert.setContentText("Appointment overlapps with a different appointment!");
-                    alert.showAndWait();
+                ObservableList<Integer> overlapID =  QueryAppointment.checkforOverlaps(customerID, startDT, endDT);
+
+                if ((!overlapID.contains(appointmentID)  && overlapID.size() > 0 ) || (overlapID.size()>1)){
+                    Utility.displayErrorAlert(5);
+
                 }
-                else {
 
-                    int rowsAffected = Query.updateAppointment(title, description, location, type, startDT, endDT, customerID, userID, Query.contactID(contactName), appointmentID);
+                else
+                {
+
+                    int rowsAffected = QueryAppointment.updateAppointment(title, description, location, type, startDT, endDT, customerID, userID, Query.contactID(contactName), appointmentID);
                     if (rowsAffected > 0) {
-                        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-                        alert.setContentText("Appointment Updated!");
-
-                        alert.showAndWait();
+                        Utility.displayInformation(2);
 
                         Stage stage = (Stage) ((Button) event.getSource()).getScene().getWindow();
                         Object scene = FXMLLoader.load(getClass().getResource("/sample/View/Appointments.fxml"));
@@ -168,7 +125,7 @@ public class UpdateAppointmentController implements Initializable {
 
             } } catch (NumberFormatException | IOException | SQLException e) {
 
-            Utility.displayErrorAlert();
+            Utility.displayErrorAlert (1);
 
 
         }
@@ -177,11 +134,7 @@ public class UpdateAppointmentController implements Initializable {
 
 
     public void cancelButtonPushed(ActionEvent event) throws IOException
-    {Alert alert = new Alert (Alert.AlertType.CONFIRMATION);
-        alert.setContentText("Do you want to go back without saving?");
-        Optional<ButtonType> result = alert.showAndWait();
-        // alert.showAndWait();
-        if (result.get() == ButtonType.OK) {
+    {  if ( Utility.displayConfirmation(1)){
             Stage stage = (Stage) ((Button) event.getSource()).getScene().getWindow();
             Object scene = FXMLLoader.load(getClass().getResource("/sample/View/Appointments.fxml"));
             stage.setScene(new Scene((Parent) scene));
@@ -198,13 +151,6 @@ public class UpdateAppointmentController implements Initializable {
         hourEndSpinnerUpd.getEditor().setDisable(true);
         minuteStartSpinnerUpd.getEditor().setDisable(true);
         minuteEndSpinnerUpd.getEditor().setDisable(true);
-
-
-
-
-        //configure the spinner with values of 0-24
-
-
 
     }
 

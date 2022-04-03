@@ -2,17 +2,23 @@ package sample.Controller;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.stage.Stage;
 import sample.Model.Appointment;
 import sample.Model.CountryReport;
 import sample.Model.Report;
-import sample.helper.JDBC;
 import sample.helper.Query;
 
+import java.io.IOException;
 import java.net.URL;
 import java.sql.SQLException;
 import java.util.ResourceBundle;
@@ -38,6 +44,7 @@ public class ReportsController implements Initializable {
     public TableView custByCountryTrable;
     public TableColumn <CountryReport, String> countryColumn;
     public TableColumn <CountryReport, Integer> totalPerCountry;
+    public Button goBackButton;
 
     public void loadCountMonth() throws SQLException {
         ObservableList<Report> reports = FXCollections.observableArrayList();
@@ -95,21 +102,21 @@ public class ReportsController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        yearColumn.setCellValueFactory(new PropertyValueFactory<Report, String>("year"));
-        monthColumn.setCellValueFactory(new PropertyValueFactory<Report, String>("month"));
-        countColumn.setCellValueFactory(new PropertyValueFactory<Report, Integer>("count"));
-        typeColumn.setCellValueFactory(new PropertyValueFactory<Report, String>("type"));
-        monthByTypeColumn.setCellValueFactory(new PropertyValueFactory<Report, String>("month"));
-        totalColumn.setCellValueFactory(new PropertyValueFactory<Report, Integer>("countType"));
-        appIdColumn.setCellValueFactory(new PropertyValueFactory<Appointment, Integer>("id"));
-        titleColumn.setCellValueFactory(new PropertyValueFactory<Appointment, String>("title"));
-        typeContColumn.setCellValueFactory(new PropertyValueFactory<Appointment, String>("type"));
-        descriptionColumn.setCellValueFactory(new PropertyValueFactory<Appointment, String>("description"));
-        startColumn.setCellValueFactory(new PropertyValueFactory<Appointment, String>("startString"));
-        endColumn.setCellValueFactory(new PropertyValueFactory<Appointment, String>("endString"));
-        customerIdColumn.setCellValueFactory(new PropertyValueFactory<Appointment, Integer>("CustomerID"));
-        countryColumn.setCellValueFactory(new PropertyValueFactory<CountryReport, String >("country"));
-        totalPerCountry.setCellValueFactory(new PropertyValueFactory<CountryReport, Integer> ("countPerCountry"));
+        yearColumn.setCellValueFactory(new PropertyValueFactory<>("year"));
+        monthColumn.setCellValueFactory(new PropertyValueFactory<>("month"));
+        countColumn.setCellValueFactory(new PropertyValueFactory<>("count"));
+        typeColumn.setCellValueFactory(new PropertyValueFactory<>("type"));
+        monthByTypeColumn.setCellValueFactory(new PropertyValueFactory<>("month"));
+        totalColumn.setCellValueFactory(new PropertyValueFactory<>("countType"));
+        appIdColumn.setCellValueFactory(new PropertyValueFactory<>("id"));
+        titleColumn.setCellValueFactory(new PropertyValueFactory<>("title"));
+        typeContColumn.setCellValueFactory(new PropertyValueFactory<>("type"));
+        descriptionColumn.setCellValueFactory(new PropertyValueFactory<>("description"));
+        startColumn.setCellValueFactory(new PropertyValueFactory<>("startString"));
+        endColumn.setCellValueFactory(new PropertyValueFactory<>("endString"));
+        customerIdColumn.setCellValueFactory(new PropertyValueFactory<>("CustomerID"));
+        countryColumn.setCellValueFactory(new PropertyValueFactory< >("country"));
+        totalPerCountry.setCellValueFactory(new PropertyValueFactory<> ("countPerCountry"));
 
         try {
             selectContactCombo.setItems(Query.selectContacts());
@@ -139,4 +146,13 @@ public class ReportsController implements Initializable {
 
 
  }
+
+    public void goBackPushed(ActionEvent event) throws IOException {
+        if (Utility.displayConfirmation(2))  {
+            Stage stage = (Stage) ((Button) event.getSource()).getScene().getWindow();
+            Object scene = FXMLLoader.load(getClass().getResource("/sample/View/Appointments.fxml"));
+            stage.setScene(new Scene((Parent) scene));
+            stage.show();
+        }
     }
+}

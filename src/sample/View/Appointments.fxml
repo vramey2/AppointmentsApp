@@ -25,11 +25,11 @@
                   </Label>
                   <HBox alignment="BOTTOM_RIGHT" prefHeight="38.0" prefWidth="832.0" spacing="15.0">
                      <children>
-                        <RadioButton fx:id="viewByMonthRadio" mnemonicParsing="false" onAction="#viewByMonthSelected" text="View  Month">
+                        <RadioButton fx:id="viewByMonthRadio" mnemonicParsing="false" text="View  Month">
                            <toggleGroup>
                               <ToggleGroup fx:id="toggleGroup" />
                            </toggleGroup></RadioButton>
-                        <RadioButton fx:id="viewByWeekRadio" mnemonicParsing="false" onAction="#viewByWeekSelected" text="View Week" toggleGroup="$toggleGroup" />
+                        <RadioButton fx:id="viewByWeekRadio" mnemonicParsing="false" text="View Week" toggleGroup="$toggleGroup" />
                      </children>
                      <padding>
                         <Insets bottom="10.0" right="20.0" />
@@ -54,7 +54,6 @@
                <children>
                   <HBox alignment="TOP_RIGHT" prefHeight="124.0" prefWidth="942.0" spacing="10.0">
                      <children>
-                        <Label fx:id="previousButton" text="Previous" />
                         <Button fx:id="addAppButton" mnemonicParsing="false" onAction="#addAppButtonPushed" text="Add" />
                         <Button fx:id="updateButton" mnemonicParsing="false" onAction="#updateButtonPushed" text="Update" />
                         <Button fx:id="deleteButton" mnemonicParsing="false" onAction="#deleteButtonPushed" text="Delete" />
@@ -70,6 +69,7 @@
                <VBox.margin>
                   <Insets />
                </VBox.margin></VBox>
+            <Button fx:id="vewAll" mnemonicParsing="false" onAction="#viewAllPushed" text="View all appointments" />
          </children></VBox>
       <VBox layoutX="20.0" layoutY="386.0" prefHeight="143.0" prefWidth="200.0" spacing="20.0">
          <children>

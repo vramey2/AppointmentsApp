@@ -12,11 +12,9 @@ import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.Stage;
 import sample.Model.Appointment;
-import sample.Model.Customer;
 import sample.helper.JDBC;
 import sample.helper.Query;
-
-
+import sample.helper.QueryAppointment;
 
 import java.io.IOException;
 import java.net.URL;
@@ -48,14 +46,15 @@ public class AppointmentsController implements Initializable {
     public RadioButton viewByWeekRadio;
     public Label previousButton;
     public Button generateReportsButton;
+    public Button vewAll;
     // private EventQueueItem Node;
 
-    public void loadAppointments() throws SQLException {
+    public void loadAppointments()  {
      ObservableList <Appointment> appointments = FXCollections.observableArrayList();
         try {
-            JDBC.openConnection();
 
-               appointments = Query.selectAppointments();
+
+               appointments = QueryAppointment.selectAppointments();
 
         } catch (Exception e) {
 
@@ -67,26 +66,41 @@ public class AppointmentsController implements Initializable {
         @Override
         public void initialize (URL url, ResourceBundle resourceBundle){
             //columns configuration
-            appointment_ID.setCellValueFactory(new PropertyValueFactory<Appointment, Integer>("id"));
-            titleColumn.setCellValueFactory(new PropertyValueFactory<Appointment, String>("title"));
-            descriptionColumn.setCellValueFactory(new PropertyValueFactory<Appointment, String>("description"));
-            locationColumn.setCellValueFactory(new PropertyValueFactory<Appointment, String>("location"));
-            contactColumn.setCellValueFactory(new PropertyValueFactory<Appointment, Integer>("contact"));
-            typeColumn.setCellValueFactory(new PropertyValueFactory<Appointment, String>("type"));
-            startColumn.setCellValueFactory(new PropertyValueFactory<Appointment, String>("startString"));
-            endColumn.setCellValueFactory(new PropertyValueFactory<Appointment, String>("endString"));
-            customerIdColumn.setCellValueFactory(new PropertyValueFactory<Appointment, Integer>("customerID"));
-            userIdColumn.setCellValueFactory(new PropertyValueFactory<Appointment, Integer>("userID"));
+            appointment_ID.setCellValueFactory(new PropertyValueFactory<>("id"));
+            titleColumn.setCellValueFactory(new PropertyValueFactory<>("title"));
+            descriptionColumn.setCellValueFactory(new PropertyValueFactory<>("description"));
+            locationColumn.setCellValueFactory(new PropertyValueFactory<>("location"));
+            contactColumn.setCellValueFactory(new PropertyValueFactory<>("contact"));
+            typeColumn.setCellValueFactory(new PropertyValueFactory<>("type"));
+            startColumn.setCellValueFactory(new PropertyValueFactory<>("startString"));
+            endColumn.setCellValueFactory(new PropertyValueFactory<>("endString"));
+            customerIdColumn.setCellValueFactory(new PropertyValueFactory<>("customerID"));
+            userIdColumn.setCellValueFactory(new PropertyValueFactory<>("userID"));
 
+viewByMonthRadio.setOnAction((event) -> {
+    try {
+        appointmentsTable.setItems(QueryAppointment.selectMonthlyAppointments());
+    } catch (SQLException throwables) {
+        throwables.printStackTrace();
+    } catch (ParseException e) {
+        e.printStackTrace();
+    }
 
-            try {
+});
+
+viewByWeekRadio.setOnAction (event -> {
+    try {
+        appointmentsTable.setItems(QueryAppointment.selectWeeklyAppointments());
+    }
+    catch (SQLException | ParseException e){
+
+        System.out.println (e.getMessage());
+    }
+});
+
                 loadAppointments();
-            } catch (SQLException e) {
-
-                System.out.println(e.getMessage());
-            }
+            
         }
-
 
 
 
@@ -102,9 +116,7 @@ public class AppointmentsController implements Initializable {
 
     public void updateButtonPushed(ActionEvent event)throws IOException, SQLException
     { if (appointmentsTable.getSelectionModel().getSelectedItem() == null){
-        Alert alert = new Alert ( Alert.AlertType.WARNING);
-        alert.setHeaderText("Please select an appointment to update!");
-        alert.showAndWait();
+        Utility.displayWarning(2);
     }
     else {
 
@@ -128,33 +140,23 @@ public class AppointmentsController implements Initializable {
     public void deleteButtonPushed(ActionEvent event) throws SQLException, ParseException {
 
         if (appointmentsTable.getSelectionModel().getSelectedItem() == null) {
-            Alert alert = new Alert ( Alert.AlertType.WARNING);
-            alert.setHeaderText("Please select appointment to delete!");
-            alert.showAndWait();
-           // System.out.println("Please select first!");
+            Utility.displayWarning(3);
+
         }
-        else {
+        else if (Utility.displayConfirmation(5)){
             Appointment appointmentDelete = appointmentsTable.getSelectionModel().getSelectedItem();
             int appointmentID = appointmentDelete.getId();
-            Alert alert = new Alert (Alert.AlertType.INFORMATION);
-            alert.setContentText("Deleted appointment ID: " + appointmentID +" type: " + Query.appointmentType(appointmentID));
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setContentText("Deleted appointment ID: " + appointmentID + " type: " + QueryAppointment.appointmentType(appointmentID));
             alert.showAndWait();
 
-            Query.deleteAppointment (appointmentID);
+            QueryAppointment.deleteAppointment(appointmentID);
 
-            appointmentsTable.setItems(Query.selectAppointments());
-        }
+            appointmentsTable.setItems(QueryAppointment.selectAppointments());
 
-    }
-
-
+        }}
     public void goBackPushed(ActionEvent event) throws IOException {
-
-        Alert alert = new Alert (Alert.AlertType.CONFIRMATION);
-        alert.setContentText("Do you want to go back without saving?");
-        Optional<ButtonType> result = alert.showAndWait();
-        // alert.showAndWait();
-        if (result.get() == ButtonType.OK) {
+      if (Utility.displayConfirmation(2))  {
             Stage stage = (Stage) ((Button) event.getSource()).getScene().getWindow();
             Object scene = FXMLLoader.load(getClass().getResource("/sample/View/Customers.fxml"));
             stage.setScene(new Scene((Parent) scene));
@@ -162,34 +164,18 @@ public class AppointmentsController implements Initializable {
         }
     }
 
-    public void viewByMonthSelected(ActionEvent event) throws IOException {
-
-        try {
-            appointmentsTable.setItems(Query.selectMonthlyAppointments());
-           // previousButton.setVisible(true);
-        } catch (SQLException | ParseException e) {
-
-            System.out.println(e.getMessage());
-        }
-    }
 
 
-    public void viewByWeekSelected(ActionEvent event) throws IOException {
-
-    try {
-        appointmentsTable.setItems(Query.selectWeeklyAppointments());
-    }
-    catch (SQLException | ParseException e){
-
-        System.out.println (e.getMessage());
-    }
-    }
 
     public void generateReportsButtonPushed(ActionEvent event) throws IOException {
         Stage stage = (Stage) ((Button) event.getSource()).getScene().getWindow();
         Object scene = FXMLLoader.load(getClass().getResource("/sample/View/reports.fxml"));
         stage.setScene(new Scene((Parent) scene));
         stage.show();
+    }
+
+    public void viewAllPushed(ActionEvent event) throws SQLException, ParseException {
+        appointmentsTable.setItems(QueryAppointment.selectAppointments());
     }
 }
 

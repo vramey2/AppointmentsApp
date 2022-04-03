@@ -79,5 +79,10 @@
             <Insets bottom="10.0" />
          </padding>
       </VBox>
+      <Button fx:id="goBackButton" layoutX="512.0" layoutY="538.0" mnemonicParsing="false" onAction="#goBackPushed" text="Go back">
+         <font>
+            <Font name="System Bold" size="12.0" />
+         </font>
+      </Button>
    </children>
 </AnchorPane>

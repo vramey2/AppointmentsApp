@@ -17,8 +17,9 @@ import sample.Model.Customer;
 import sample.helper.JDBC;
 import sample.Controller.UpdateCustomerController;
 import sample.helper.Query;
+import sample.helper.QueryAppointment;
 
-import javax.swing.*;
+
 import java.io.IOException;
 import java.net.URL;
 import java.sql.*;
@@ -40,6 +41,7 @@ public class CustomersController implements Initializable {
     public TableColumn<Customer, String> CountryColumn;
     public TableColumn<Customer, String> DivisionColumn;
     public javafx.scene.control.Button deleteButton;
+    public javafx.scene.control.Button exitButton;
     private Object Button;
     private int Division_ID;
     /** Object of customer that was selected by the user */
@@ -113,11 +115,8 @@ public class CustomersController implements Initializable {
             alert.showAndWait();
         }
         else {
-            Alert confirm = new Alert ( Alert.AlertType.CONFIRMATION);
-           confirm.setHeaderText("Do you want to delete customer?");
-             Optional<ButtonType> result = confirm.showAndWait();
-            // alert.showAndWait();
-            if (result.get() == ButtonType.OK) {
+            if (Utility.displayConfirmation(4)){
+
 
             Customer customerDelete = TableCustomers.getSelectionModel().getSelectedItem();
             int customerID = customerDelete.getCustomerId();
@@ -149,7 +148,7 @@ public class CustomersController implements Initializable {
         else {
 
 
-FXMLLoader loader = new FXMLLoader();
+            FXMLLoader loader = new FXMLLoader();
             loader.setLocation(getClass().getResource("/sample/View/UpdateCustomer.fxml"));
 
             Parent tableViewParent = loader.load();
@@ -161,6 +160,15 @@ FXMLLoader loader = new FXMLLoader();
             Stage window = (Stage) ((Node) event.getSource()).getScene().getWindow();
             window.setScene(tableViewScene);
             window.show();
+        }
+    }
+
+    public void exitPushed(ActionEvent event) {
+        if (Utility.displayConfirmation(3)){
+
+            JDBC.closeConnection();
+            Stage stage = (Stage) exitButton.getScene().getWindow();
+            stage.close();
         }
     }
 }

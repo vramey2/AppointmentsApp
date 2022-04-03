@@ -11,12 +11,9 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
-import sample.Model.User;
 import sample.Model.UserLogged;
 import sample.helper.JDBC;
-import sample.helper.Query;
-
-import java.io.File;
+ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -55,7 +52,6 @@ public class LoginController implements Initializable  {
         UsernameLabel.setText (rb.getString("UsernameLabel.text"));
         PasswordLabel.setText(rb.getString("PasswordLabel.text"));
         submitButton.setText(rb.getString("submitButton.text"));
-
         locationLabel.setText (rb.getString("locationLabel.text") + ZoneId.systemDefault());
     }
     }
@@ -122,6 +118,7 @@ public class LoginController implements Initializable  {
 
                 else
                     pw.append(userName + " " + ZonedDateTime.now() + " failed to log in" + "\n");
+
                 pw.close();
 
             }
@@ -169,7 +166,7 @@ public class LoginController implements Initializable  {
 
 
 
-                 if (resultSet.next() == false) {
+                 if (!resultSet.next()) {
                      Alert alert = new Alert(Alert.AlertType.WARNING);
                      if(Locale.getDefault().getLanguage().equals("fr")){
                          ResourceBundle rb = ResourceBundle.getBundle("sample/translt", Locale.getDefault());
@@ -185,11 +182,10 @@ public class LoginController implements Initializable  {
 
                  else {
                      do {
-                         System.out.println("inside while result set");
+
 
                          int appointmentID = resultSet.getInt("Appointment_ID");
                          Timestamp start = resultSet.getTimestamp("Start");
-
 
 
                          ZonedDateTime utcmStart = start.toInstant().atZone(utcZoneID);
