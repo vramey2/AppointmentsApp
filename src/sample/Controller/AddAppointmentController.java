@@ -15,29 +15,68 @@ import java.io.IOException;
 import java.net.URL;
 import java.sql.SQLException;
 import java.time.*;
-import java.time.format.DateTimeFormatter;
 import java.util.ResourceBundle;
 
+/**This is a controller class initiating functionality of addAppointmentScreen.fxml.
+ *
+ * @author Veronika Ramey
+ */
 public class AddAppointmentController implements Initializable {
+
+    /**Text field for appointment's id*/
     public TextField appointmentIdTextfield;
+
+    /**Text field for appointment's title*/
     public TextField titleTextField;
+
+    /**Text field for appointment's description*/
     public TextField descriptionTextfield;
+
+    /**Text field for appointment's location*/
     public TextField locationTextfield;
+
+    /**Text field for type of appointment*/
      public TextField typeTextfield;
+
+     /**Text field for customer's id*/
     public TextField customerTextfield;
+
+    /**Text fiedl for user's id*/
     public TextField userIdTextfield;
+
+    /**Button to save the new customer*/
     public Button saveButton;
+
+    /**Button to cancel and go back to main appointments screen*/
     public Button cancelButton;
+
+    /**Date picker to chose end date for appointment*/
     public DatePicker endDT;
+
+    /**Date picker to chose start date for appointment*/
     public DatePicker startDT;
+
+    /**Spinner to chose starting hour for appointment*/
      public Spinner hourStartSpinner;
+
+     /**Spinner to chose starting minute for appointment*/
     public Spinner minuteStartSpinner;
+
+    /**Spinner to chose ending hour for appointment*/
     public Spinner hourEndSpinner;
+
+    /**Spinner to chose endign minute for appointment*/
     public Spinner minuteEndSpinner;
+
+    /**Combobox to select name of appointment's contact*/
     public ComboBox <String>  selectContactName;
 
 
-
+    /**Changes scene to appointments scree - Appointments.fxml.
+     * This method is used to go back to appointments screen without saving changes once the user confirms the action.
+     * @param  event Action on cancel button
+     * @throws IOException
+     */
     public void cancelButtonPushed(ActionEvent event) throws IOException {
 
       if (Utility.displayConfirmation(1)){
@@ -47,6 +86,12 @@ public class AddAppointmentController implements Initializable {
             stage.show();
         }
     }
+
+    /**Initializes controller. Method is used to initialize controller for add apoointment scene.
+     *
+     * @param url Describes resolving relative paths for the root object
+     * @param resourceBundle The root object's localization resources, if root object is not localized null."/
+     */
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -67,13 +112,11 @@ public class AddAppointmentController implements Initializable {
         minuteEndSpinner.getEditor().setDisable(true);
 
 
-
-
         //configure the spinner with values of 0-24
         SpinnerValueFactory <Integer> starthourValueFactory = new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 23);
         this.hourStartSpinner.setValueFactory(starthourValueFactory);
 
-    SpinnerValueFactory <Integer> startminuteValueFactory = new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 59);
+         SpinnerValueFactory <Integer> startminuteValueFactory = new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 59);
         this.minuteStartSpinner.setValueFactory(startminuteValueFactory);
 
 
@@ -111,28 +154,7 @@ try {
             String endMinute = minuteEndSpinner.getValue().toString();
             if (endMinute.length() == 1)
                 endMinute = "0" + endMinute;
-/**
-            String endTime = endHour + ":" + endMinute;
-            String startTime = startHour + ":" + startMinute;
-            ZoneId myZDoneId = ZoneId.systemDefault();
-            DateTimeFormatter parser = DateTimeFormatter.ofPattern("HH:mm");
-            LocalTime localStartTime = LocalTime.parse(startTime, parser);
-            LocalDateTime localStartDateTime = LocalDateTime.of(startdt, localStartTime);
-            LocalTime localEndTime = LocalTime.parse(endTime, parser);
-            LocalDateTime localEndDateTime = LocalDateTime.of(enddt, localEndTime);
-            ZonedDateTime startmyZDT = ZonedDateTime.of(LocalDateTime.from(localStartDateTime), myZDoneId);
-            ZonedDateTime endmyZDT = ZonedDateTime.of(LocalDateTime.from(localEndDateTime), myZDoneId);
-            ZoneId utcZneId = ZoneId.of("UTC");
-            ZonedDateTime utcStartZDT = ZonedDateTime.ofInstant(startmyZDT.toInstant(), utcZneId);
-            ZonedDateTime utcEndZDT = ZonedDateTime.ofInstant(endmyZDT.toInstant(), utcZneId);
-            String startDate = String.valueOf(utcStartZDT.toLocalDate());
-            String startUTCTime = String.valueOf((utcStartZDT.toLocalTime()));
-            String startDT = startDate + " " + startUTCTime;
-            String endDate = String.valueOf(utcEndZDT.toLocalDate());
-            String endutcTime = String.valueOf(utcEndZDT.toLocalTime());
-            String endDT = endDate + " " + endutcTime;
 
-*/
     String startDT = Utility.convertTime(startHour, startMinute, startdt);
     String endDT = Utility.convertTime (endHour, endMinute, enddt);
     ZonedDateTime utcStartZDT = Utility.convertUTCTime(startHour, startMinute, startdt);
