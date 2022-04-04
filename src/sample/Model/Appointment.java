@@ -1,6 +1,6 @@
 package sample.Model;
 
-import java.sql.Time;
+
 import java.sql.Timestamp;
 
 
@@ -47,7 +47,7 @@ public class Appointment {
     private String endString;
 
 
-    /**Method creates instace of Appoinmtent. This is a constructor method for appointment with corresponding fields.
+    /**Method creates instance of Appointment. This is a constructor method for appointment with corresponding fields.
      * @param id Id number of the appointment
      * @param title  Title of the appointment
      * @param description  Description of the appointment

@@ -41,10 +41,10 @@ public class AddAppointmentController implements Initializable {
      /**Text field for customer's id*/
     public TextField customerTextfield;
 
-    /**Text fiedl for user's id*/
+    /**Text field for user's id*/
     public TextField userIdTextfield;
 
-    /**Button to save the new customer*/
+    /**Button to save the new appointment*/
     public Button saveButton;
 
     /**Button to cancel and go back to main appointments screen*/
@@ -65,14 +65,14 @@ public class AddAppointmentController implements Initializable {
     /**Spinner to chose ending hour for appointment*/
     public Spinner hourEndSpinner;
 
-    /**Spinner to chose endign minute for appointment*/
+    /**Spinner to chose ending minute for appointment*/
     public Spinner minuteEndSpinner;
 
     /**Combobox to select name of appointment's contact*/
     public ComboBox <String>  selectContactName;
 
 
-    /**Changes scene to appointments scree - Appointments.fxml.
+    /**Changes scene to appointments screen - Appointments.fxml.
      * This method is used to go back to appointments screen without saving changes once the user confirms the action.
      * @param  event Action on cancel button
      * @throws IOException
@@ -87,10 +87,10 @@ public class AddAppointmentController implements Initializable {
         }
     }
 
-    /**Initializes controller. Method is used to initialize controller for add apoointment scene.
+    /**Initializes controller. Method is used to initialize controller for add appointment scene.
      *
      * @param url Describes resolving relative paths for the root object
-     * @param resourceBundle The root object's localization resources, if root object is not localized null."/
+     * @param resourceBundle The root object's localization resources, if root object is not localized - null.
      */
 
     @Override
@@ -127,10 +127,14 @@ public class AddAppointmentController implements Initializable {
         this.minuteEndSpinner.setValueFactory(endtminuteValueFactory);
 
 }
+
+
+/**Method to create a new instance of an appointment. Method adds new appointment and takes back to appointments main screen.
+ * Before appointment is saved all input is validated and appropriate alerts are displayed.
+ * @param event acton on save button*/
     public void saveButtonPushed(ActionEvent event) throws SQLException, IOException {
 
 try {
-
             String title = titleTextField.getText();
             String description = descriptionTextfield.getText();
             String location = locationTextfield.getText();
@@ -155,40 +159,40 @@ try {
             if (endMinute.length() == 1)
                 endMinute = "0" + endMinute;
 
-    String startDT = Utility.convertTime(startHour, startMinute, startdt);
-    String endDT = Utility.convertTime (endHour, endMinute, enddt);
-    ZonedDateTime utcStartZDT = Utility.convertUTCTime(startHour, startMinute, startdt);
-    ZonedDateTime utcEndZDT = Utility.convertUTCTime (endHour, endMinute, enddt);
+             String startDT = Utility.convertTime(startHour, startMinute, startdt);
+            String endDT = Utility.convertTime (endHour, endMinute, enddt);
+            ZonedDateTime utcStartZDT = Utility.convertUTCTime(startHour, startMinute, startdt);
+            ZonedDateTime utcEndZDT = Utility.convertUTCTime (endHour, endMinute, enddt);
 
             if ( Utility.validateBusinessHours(utcStartZDT, utcEndZDT)){
                 Utility.displayWarning(1);
             }
+
             else if (title.isEmpty() || description.isEmpty() || location.isEmpty() || type.isEmpty()
             || customerTextfield.getText().isEmpty() || userIdTextfield.getText().isEmpty() || contactName == null  ) {
               Utility.displayErrorAlert(1);
-
             }
+
             else if (utcStartZDT.isAfter(utcEndZDT)){
                Utility.displayErrorAlert(2);
             }
+
             else if (Query.customerExists(customerID)){
-
               Utility.displayErrorAlert(3);
+              }
 
-    }
             else if (Query.userExists(userID)){
-
                 Utility.displayErrorAlert(4);
-
             }
+
             else  {
                 ObservableList<Integer> overlapID  = QueryAppointment.checkforOverlaps(customerID, startDT, endDT);
                 if (!overlapID.isEmpty()){
                   Utility.displayErrorAlert(5);
                 }
                 else {
-
                 int rowsAffected = QueryAppointment.insertAppointment(title, description, location, type, startDT, endDT, customerID, userID, Query.contactID(contactName));
+
                 if (rowsAffected > 0) {
                     Alert alert = new Alert(Alert.AlertType.INFORMATION);
                     alert.setContentText("Appointment Added!");

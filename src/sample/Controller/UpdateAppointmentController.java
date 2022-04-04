@@ -11,40 +11,78 @@ import javafx.stage.Stage;
 import sample.Model.Appointment;
 import sample.helper.Query;
 import sample.helper.QueryAppointment;
-
 import java.io.IOException;
 import java.net.URL;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.time.*;
-import java.time.format.DateTimeFormatter;
-import java.time.temporal.ChronoField;
-import java.util.Optional;
 import java.util.ResourceBundle;
 
+
+
+/**This is a controller class initiating functionality of updateAppointment.fxml.
+ * @author  Veronika Ramey
+ * */
 public class UpdateAppointmentController implements Initializable {
+
+    /**Date picker to chose appointment's start date*/
     public DatePicker startUpdDT;
+
+    /**Spinner to select appointment's start hour*/
     public Spinner hourStartSpinneUpd;
+
+    /**Spinner to select appointment's start minute*/
     public Spinner minuteStartSpinnerUpd;
+
+    /**Text field for appointment's id*/
     public TextField appointmentIdUpdTextfield;
+
+    /**Text field for appointment's title*/
     public TextField titleUpdTextField;
+
+    /**Text field for appointment's description*/
     public TextField descriptionUpdTextfield;
+
+    /**Text field for appointment's location*/
     public TextField locationUpdTextfield;
+
+    /**Text field for appointment's type*/
     public TextField typeUpdTextfield;
+
+    /**Text field for user's id*/
     public TextField userIdUpdTextfield;
+
+    /**Combo box to select name of contact for the appointment*/
     public ComboBox selectContactNameUpd;
+
+    /**Text field for customer's id*/
     public TextField customerUpdTextfield;
+
+    /**Date picker to chose appointment's end date*/
     public DatePicker endDTUpd;
+
+    /**Spinner to select appointment's end hour*/
     public Spinner hourEndSpinnerUpd;
+
+    /**Spinner to select appointment's end minute*/
     public Spinner minuteEndSpinnerUpd;
+
+    /**Button to save updated appointment*/
     public Button saveButtonUpd;
+
+    /**Button to go back without saving*/
     public Button cancelButtonUpd;
+
+    /**Selected appointment*/
     public Appointment selectedAppointment;
 
-    public void saveButtonPushed(ActionEvent event) {
+
+    /**Method saves updated appointment. This method saves edited appointment after input validation.
+     * Upon saving redirects to appointments main screen
+     * @param event Action on save button*/
+        public void saveButtonPushed(ActionEvent event) {
 
         try {
-
             String title = titleUpdTextField.getText();
             String description = descriptionUpdTextfield.getText();
             String location = locationUpdTextfield.getText();
@@ -78,7 +116,6 @@ public class UpdateAppointmentController implements Initializable {
             ZonedDateTime utcEndZDT = Utility.convertUTCTime (endHour, endMinute, enddt);
 
 
-//check why utc time ?
                 if (Utility.validateBusinessHours(utcStartZDT, utcEndZDT)){
                     Utility.displayWarning(4);
 
@@ -126,13 +163,13 @@ public class UpdateAppointmentController implements Initializable {
             } } catch (NumberFormatException | IOException | SQLException e) {
 
             Utility.displayErrorAlert (1);
-
-
         }
     }
 
 
-
+    /**Method redirects back to appointments vew without saving. Method is used to go back to appointments.fxml scene without saving after confirmation alert is displayed.
+     * @param event Action on cancel button
+     * @throws IOException*/
     public void cancelButtonPushed(ActionEvent event) throws IOException
     {  if ( Utility.displayConfirmation(1)){
             Stage stage = (Stage) ((Button) event.getSource()).getScene().getWindow();
@@ -142,6 +179,11 @@ public class UpdateAppointmentController implements Initializable {
         }
     }
 
+
+    /**Initializes controller. Method is used to initialize controller for update appointment scene.
+     * @param url Describes resolving relative paths for the root object
+     * @param resourceBundle The root object's localization resources, if root object is not localized - null.
+     */
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         appointmentIdUpdTextfield.setEditable(false);
@@ -154,7 +196,9 @@ public class UpdateAppointmentController implements Initializable {
 
     }
 
-    //to populate the view.
+    /**Method to initialize the view. The method populates data to initialize the view.
+     * @param appointment Selected appointment
+     * @throws SQLException */
     public void populateData (Appointment appointment) throws SQLException {
          selectedAppointment = appointment;
 
@@ -179,9 +223,7 @@ public class UpdateAppointmentController implements Initializable {
         String [] substrings = startTimeUpd.split(":");
         String hours = substrings[0];
         String minutes = substrings[1];
-        System.out.println (hours);
-        System.out.println (minutes);
-        Timestamp endDate = selectedAppointment.getEndDateTime();
+         Timestamp endDate = selectedAppointment.getEndDateTime();
         ZonedDateTime utcEndZDT = ZonedDateTime.ofInstant (endDate.toInstant (), utcZoneId);
         ZonedDateTime myEndZDT = ZonedDateTime.ofInstant(utcEndZDT.toInstant(), ZoneId.systemDefault());
         String endDateUpd = String.valueOf(myEndZDT.toLocalDate());
@@ -203,8 +245,6 @@ public class UpdateAppointmentController implements Initializable {
 
         SpinnerValueFactory <Integer> endtminuteValueFactory = new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 59, Integer.parseInt(endMinutes));
         this.minuteEndSpinnerUpd.setValueFactory(endtminuteValueFactory);
-
-
 
     }
 }

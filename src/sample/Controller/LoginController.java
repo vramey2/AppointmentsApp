@@ -27,24 +27,39 @@ import java.time.format.DateTimeFormatter;
 import java.util.Locale;
 import java.util.ResourceBundle;
 
+/**This is controller class to initialize functionality of Login.fxml.
+ * @author Veronika Ramey
+ */
 public class LoginController implements Initializable  {
 
+    /**Text field for user's log in name*/
     public TextField Userloginname;
+
+    /**Text field for user's password*/
     public TextField Password;
+
+    /**Label for user's location text*/
     public Label locationLabel;
+
+    /**Label for user's name text field*/
     public Label UsernameLabel;
+
+    /**Label for user's password text field*/
     public Label PasswordLabel;
 
+    /**Button to submit user's password and username*/
     @FXML
-    private Button submitButton; 
+    private Button submitButton;
 
 
-
+    /**Initializes log in  scene. Method is used to initialize controller for logging in - Login.fxml.
+     * @param url Describes resolving relative paths for the root object
+     * @param resourceBundle The root object's localization resources, if root object is not localized - null.
+     */
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        System.out.println ("Initialized!");
-       locationLabel.setText("Your location: " + ZoneId.systemDefault());
-        System.out.println("Your location: " + ZoneId.systemDefault());
+        locationLabel.setText("Your location: " + ZoneId.systemDefault());
+
     //  Locale.setDefault(new Locale("fr"));
         ResourceBundle rb = ResourceBundle.getBundle("sample/translt", Locale.getDefault());
 
@@ -56,12 +71,15 @@ public class LoginController implements Initializable  {
     }
     }
 
+
+    /**Method validates users credentials and changes the scene to Customer.fxml. This method changes scene to customers view once user's credentials are validated.
+     * If user input is missing or invalid a corresponding alert is displayed. Successful and failed log in attempts are recorded in login_activity.txt file.
+     * Alert is displayed if an appointment is scheduled within 15 minutes from login time or a message is shown confirming no upcoming appointments.
+     * @param event Action on submit button*/
     public void submitButtonClicked(ActionEvent event) throws SQLException, IOException {
 
         String userName = Userloginname.getText();
         String password = Password.getText();
-
-
 
         if (userName.isEmpty() || password.isEmpty()){
 
@@ -140,7 +158,7 @@ public class LoginController implements Initializable  {
               System.out.println("Success!");
 
 
-         Instant now = Instant.now();
+              Instant now = Instant.now();
               ZonedDateTime myZDT = ZonedDateTime.ofInstant(now,
                       ZoneId.systemDefault());
               //convert to utc
@@ -150,9 +168,6 @@ public class LoginController implements Initializable  {
               DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
               String utcStart = utcZDT.format(formatter);
               String utcEnd =  utcZDT.plusMinutes(15).format(formatter);
-
-
-
 
                   try {
                   JDBC.openConnection();
@@ -164,14 +179,11 @@ public class LoginController implements Initializable  {
                   ResultSet resultSet = ps.executeQuery();
 
 
-
-
                  if (!resultSet.next()) {
                      Alert alert = new Alert(Alert.AlertType.WARNING);
                      if(Locale.getDefault().getLanguage().equals("fr")){
                          ResourceBundle rb = ResourceBundle.getBundle("sample/translt", Locale.getDefault());
                          alert.setHeaderText(rb.getString("noappointmentsalert"));
-
                      }
 
                      else
@@ -182,8 +194,6 @@ public class LoginController implements Initializable  {
 
                  else {
                      do {
-
-
                          int appointmentID = resultSet.getInt("Appointment_ID");
                          Timestamp start = resultSet.getTimestamp("Start");
 
@@ -240,8 +250,6 @@ public class LoginController implements Initializable  {
               else
               alert.setHeaderText("Please enter valid credentials!");
               alert.showAndWait();
-
-
         }}
 
 }}

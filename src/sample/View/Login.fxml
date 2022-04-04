@@ -40,6 +40,6 @@
             </Button>
          </children>
       </VBox>
-      <Label fx:id="locationLabel" layoutX="51.0" layoutY="330.0" prefHeight="26.0" prefWidth="194.0" text="Label" />
+      <Label fx:id="locationLabel" layoutX="51.0" layoutY="330.0" prefHeight="26.0" prefWidth="309.0" text="Label" />
    </children>
 </AnchorPane>

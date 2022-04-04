@@ -6,17 +6,19 @@ import sample.Controller.Utility;
 import sample.Model.*;
 
 import java.sql.*;
-import java.text.ParseException;
 import java.time.*;
 
+/**Class for database queries. Class is used for queries to the database.
+ * @author Veronika Ramey
+ */
 public class Query {
 
-    //  private static Object ZonedDateTime;
-
-    public Query() throws SQLException {
-    }
-
-
+    /**Method to delete customer. Deletes customer from the database.
+     *
+     * @param customerID ID of customer to be deleted
+     * @return int number of deletions made
+     * @throws SQLException
+     */
     public static int deleteCustomer(int customerID) throws SQLException {
 
         String sql = "DELETE FROM CUSTOMERS WHERE Customer_ID = ?";
@@ -26,7 +28,12 @@ public class Query {
         return rowsAffected;
     }
 
-
+    /**Method to lookup appointments for a customer. Method is used to search for appointments for a customer.
+     *
+     * @param customerID Customer's ID for whom the search is made
+     * @return int number of found apointments
+     * @throws SQLException
+     */
     public static int checkForAppointments(int customerID) throws SQLException {
 
         String sql = "SELECT Appointment_ID  FROM APPOINTMENTS WHERE Customer_ID = ? ";
@@ -40,10 +47,10 @@ public class Query {
         }
         return rowsAffected;
 
-
     }
 
-
+/**Method to search for contact names. Method is used to find contact names in the db
+ * @return ObservableList contacts*/
 
     public static ObservableList<String> selectContacts() throws SQLException {
         ObservableList<String> contacts = FXCollections.observableArrayList();
@@ -58,6 +65,13 @@ public class Query {
         return contacts;
     }
 
+
+    /**Method to find contact's ID. Method is used to find contact ID for a contact name in the DB.
+     *
+     * @param contactName Name of contact
+     * @return Integer ID of the contact
+     * @throws SQLException
+     */
     public static Integer contactID(String contactName) throws SQLException {
         Integer contactID = 0;
         String sql = "SELECT Contact_ID FROM contacts WHERE Contact_Name = ?";
@@ -68,10 +82,15 @@ public class Query {
             contactID = resultSet.getInt("Contact_ID");
 
         }
-
         return contactID;
     }
 
+    /**Method to search for contact's name. Method is used to find contact's name for a specific contact's ID in the db
+     *
+     * @param contactID contact's ID
+     * @return String contact's name
+     * @throws SQLException
+     */
     public static String contactName (int contactID) throws SQLException {
         String contactName = null;
         String sql = "SELECT Contact_Name FROM contacts WHERE Contact_ID= ?";
@@ -82,10 +101,15 @@ public class Query {
             contactName = resultSet.getString("Contact_Name");
 
         }
-
         return contactName;
     }
 
+    /**Method to verify that the customer exists. Method is used to verify if the customer exists in the database
+     *
+     * @param customerId Customer's id
+     * @return boolean True if customer doesn't exist in the database
+     * @throws SQLException
+     */
     public static boolean customerExists(int customerId) throws SQLException {
 
         int rowsAffected = 0;
@@ -99,6 +123,12 @@ public class Query {
         return (rowsAffected <= 0);
     }
 
+    /**Method to verify if the user exists. Method is used to verify if a specific user exists in the database
+     *
+     * @param userId User's ID
+     * @return boolean True if the user doesn't exist in the db
+     * @throws SQLException
+     */
     public static boolean userExists(int userId) throws SQLException {
 
         int rowsAffected = 0;
@@ -112,7 +142,12 @@ public class Query {
         return (rowsAffected <= 0);
     }
 
-public static ObservableList selectCountMonth()throws SQLException{
+    /**Method to count appointments by month. Method is used to count appointments by month
+     *
+     * @return ObservableList Appointments grouped by month and year
+     * @throws SQLException
+     */
+    public static ObservableList selectCountMonth()throws SQLException{
         ObservableList <Report> reports = FXCollections.observableArrayList();
 
    String sql = "SELECT year(Start) as 'Year', MONTHNAME(Start) as 'Month', count(Description) as 'count'  from appointments group by year(Start), MONTH(Start)";
@@ -133,7 +168,12 @@ public static ObservableList selectCountMonth()throws SQLException{
          return reports;
 }
 
-public static ObservableList countByCountry() throws SQLException {
+    /**Method to count customers by country. Method is used to count customers for each country
+     *
+     * @return ObservableList customers by country
+     * @throws SQLException
+     */
+    public static ObservableList countByCountry() throws SQLException {
         ObservableList <CountryReport> newReports = FXCollections.observableArrayList();
 
         String sql = "SELECT customers.Customer_Name, customers.Customer_ID, countries.Country, count(Customer_ID) as 'count' from  customers\n" +
@@ -152,7 +192,13 @@ public static ObservableList countByCountry() throws SQLException {
         return newReports;
 
 }
-public static ObservableList selectCountType ()throws SQLException{
+
+    /**Method to count appointments by type. Method is used to count number of appointments for each type in the db
+     *
+     * @return ObservableList Appointments by type
+     * @throws SQLException
+     */
+    public static ObservableList selectCountType ()throws SQLException{
         ObservableList <Report> reporttype = FXCollections.observableArrayList();
 
         String sql = "SELECT Type, month(start) as 'Month', count(Type) as 'Total' from appointments group by month(start), Type";
@@ -173,8 +219,11 @@ public static ObservableList selectCountType ()throws SQLException{
 }
 
 
-
-    //To load from the database
+    /**Method to select customers from database. Method is used to select customers in the database.
+     *
+     * @return ObservableList List of customers
+     * @throws SQLException
+     */
 
     public static ObservableList selectCustomers() throws SQLException {
         ObservableList<Customer> customers = FXCollections.observableArrayList();
@@ -184,50 +233,53 @@ public static ObservableList selectCountType ()throws SQLException{
         ResultSet resultSet = ps.executeQuery();
 
         while (resultSet.next()) {
-            System.out.println("Inside rsult set");
 
             int customerID = resultSet.getInt("Customer_ID");
-            System.out.println(customerID);
             String customerName = resultSet.getString("Customer_Name");
 
             String zipCode = resultSet.getString("Postal_Code");
             String phoneNumber = resultSet.getString("Phone");
-            System.out.println(phoneNumber);
+
             String division = resultSet.getString("Division");
             int divisionId = resultSet.getInt("Division_ID");
             String address = resultSet.getString("Address");
 
             String country = resultSet.getString("Country");
-            //  String customerAddress = address + ", " + division + ", " + country;
             String customerAddress = address;
             Customer newCustomer = new Customer(customerID, customerName, customerAddress, zipCode, phoneNumber, country, division, divisionId);
             customers.add(newCustomer);
-
-
         }
         return customers;
     }
 
-
+    /**Method to find division ID. Method is used to find division id for a specific division in the db
+     *
+     * @param Division Name of division
+     * @return Integer Division's ID
+     * @throws SQLException
+     */
     public static Integer DivisionID(String Division) throws SQLException {
         Integer divisionID = 0;
-
-
         String sql = "SELECT Division, Division_ID FROM first_level_divisions WHERE Division =  ? ";
         PreparedStatement ps = JDBC.connection.prepareStatement(sql);
         ps.setString(1, Division);
         ResultSet resultSet = ps.executeQuery();
         while (resultSet.next()) {
             divisionID = resultSet.getInt("Division_ID");
-            System.out.println("Division ID is " + divisionID);
-        }
+             }
 
 
-        System.out.println(divisionID);
+
         return divisionID;
     }
 
 
+    /**Method to find country's ID. Method is used to find specific country's id in the db
+     *
+     * @param  Country Name of country
+     * @return Integer Country's id
+     * @throws SQLException
+     */
     public static Integer CountryID(String Country) throws SQLException {
         Integer countryID = 0;
 
@@ -246,7 +298,12 @@ public static ObservableList selectCountType ()throws SQLException{
     }
 
 
-
+    /**Method to find country for a given Division ID. Method is used to find country for a specific division's id
+     *
+     * @param Division_ID ID of division
+     * @return ObservableList Countries
+     * @throws SQLException
+     */
     public static ObservableList<String> selectCountry(int Division_ID) throws SQLException {
         ObservableList<String> selectCountry = FXCollections.observableArrayList();
         try {
@@ -257,20 +314,27 @@ public static ObservableList selectCountType ()throws SQLException{
             ps.setInt(1, Division_ID);
             ResultSet resultSet = ps.executeQuery();
 
-            //CREATE CUSTOMER OBJECT FROM EACH RECORD
             while (resultSet.next()) {
 
                 String country = resultSet.getString("Country");
                 selectCountry.add(country);
-
-
             }
         } catch (Exception e) {//
         }
         return selectCountry;
     }
 
-    //add customer to DB
+    /**Method to add customer to database. Method is used to insert new customer's record in the database.
+     *
+     * @param customerName Customer's name
+     * @param customerAddress Customer's address
+     * @param zipCode Customer's zip code
+     * @param phoneNumber Customer's phone number
+     * @param divisionId Customer's division id
+     * @return int Number of records inserted
+     * @throws SQLException
+     */
+
     public static int insertCustomer(String customerName, String customerAddress, String zipCode, String phoneNumber,
                                      int divisionId)
             throws SQLException {
@@ -291,8 +355,19 @@ public static ObservableList selectCountType ()throws SQLException{
         int rowsAffected = ps.executeUpdate();
         return rowsAffected;
 
-
     }
+
+    /**Method to update customer's record in the database. Method is used to edit record for existing customer in the database.
+     *
+     * @param customerName Customer's name
+     * @param customerAddress Customer's address
+     * @param zipCode Customer's zip code
+     * @param phoneNumber Customer's phone number
+     * @param divisionId Customer's division id
+     * @param customerID Customer's ID
+     * @return int Number of records updated
+     * @throws SQLException
+     */
 
     //update customer in DB
     public static int updateCustomer(String customerName, String customerAddress, String zipCode, String phoneNumber,
@@ -314,18 +389,19 @@ public static ObservableList selectCountType ()throws SQLException{
         int rowsAffected = ps.executeUpdate();
         return rowsAffected;
 
-
     }
 
 
+    /**Method to select divisions from DB. Method is used to select divisions for a specific country's ID
+     *
+     * @param Country_ID ID of country
+     * @return ObservableList divisions
+     * @throws SQLException
+     */
     public static ObservableList <String> loadDivisions(int Country_ID) throws SQLException
 
     {
-
-    {
-
-
-        ObservableList<String> selectDivisionList = FXCollections.observableArrayList();
+            ObservableList<String> selectDivisionList = FXCollections.observableArrayList();
         try {
             JDBC.openConnection();
 
@@ -334,7 +410,7 @@ public static ObservableList selectCountType ()throws SQLException{
             ps.setInt(1, Country_ID);
             ResultSet resultSet = ps.executeQuery();
 
-            //CREATE CUSTOMER OBJECT FROM EACH RECORD
+
             while (resultSet.next()) {
 
                 String division = resultSet.getString("Division");
@@ -347,12 +423,12 @@ public static ObservableList selectCountType ()throws SQLException{
     }
 
 
-
-
-
-    }
-
-    public static ObservableList <String> loadAllCountries() throws SQLException  {
+    /**Method to select all countries. Method is used to load all countries from the db
+     *
+     * @return ObservableList List of countries
+     * @throws SQLException
+     */
+      public static ObservableList <String> loadAllCountries() throws SQLException  {
 
         ObservableList <String> allCountries = FXCollections.observableArrayList();
         String sql = "SELECT COUNTRY FROM countries";
@@ -366,6 +442,12 @@ public static ObservableList selectCountType ()throws SQLException{
         }
         return allCountries;
     }
+
+    /**Method to select all division. Method is used to load all divisions from the db
+     *
+     * @return ObservableList List of divisions
+     * @throws SQLException
+     */
     public static ObservableList <String> loadAllDivisions() throws SQLException  {
 
         ObservableList <String> allDivisions = FXCollections.observableArrayList();
@@ -381,8 +463,13 @@ public static ObservableList selectCountType ()throws SQLException{
         return allDivisions;
     }
 
-
-public static  ObservableList selectAppointmentsByContact (int contactId) throws SQLException{
+    /**Method to find appointments for a certain contact ID. Method is used to find appointments for a specific contact id in the db.
+     *
+     * @param contactId ID of contact
+     * @return ObservableList Appointments for a specific contact
+     * @throws SQLException
+     */
+    public static  ObservableList selectAppointmentsByContact (int contactId) throws SQLException{
         ObservableList<Appointment> byContact = FXCollections.observableArrayList();
         String sql = "SELECT * FROM appointments where Contact_ID = ?";
         PreparedStatement ps = JDBC.connection.prepareStatement(sql);
@@ -401,19 +488,16 @@ public static  ObservableList selectAppointmentsByContact (int contactId) throws
             int customerID = rs.getInt("Customer_ID");
             int userID = rs.getInt("User_ID");
 
-            System.out.println (startDateTime + " timestamp");
+
             ZoneId myZoneID = ZoneId.systemDefault();
             ZoneId utcZoneId = ZoneId.of("UTC");
 
             ZonedDateTime utcStartZDT = ZonedDateTime.ofInstant (startDateTime.toInstant(), utcZoneId);
             ZonedDateTime utcEndZDT = ZonedDateTime.ofInstant (endDateTime.toInstant(), utcZoneId);
-            System.out.println (utcStartZDT + "utcStartZDT");
             ZonedDateTime myStartDateTime = ZonedDateTime.ofInstant (utcStartZDT.toInstant(), myZoneID);
-            System.out.println (myStartDateTime + "myStartDT");
             ZonedDateTime startToLocalInstat = utcStartZDT.withZoneSameInstant(myZoneID);
-            System.out.println (startToLocalInstat + "instant");
             ZonedDateTime startLocal = startDateTime.toInstant().atZone(myZoneID);
-            System.out.println (startLocal + "startLocal");
+
             ZonedDateTime myEndDateTime = ZonedDateTime.ofInstant(utcEndZDT.toInstant(), myZoneID);
             String startTime = String.valueOf (myStartDateTime.toLocalTime());
             String endTime = String.valueOf (myEndDateTime.toLocalTime());

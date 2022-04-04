@@ -6,11 +6,24 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import sample.Controller.Utility;
 import sample.Model.*;
-
 import java.sql.*;
 import java.text.ParseException;
 import java.time.*;
+
+
+/**Class for database queries on appointments. Class is used for queries regarding appointments to the database.
+ * @author Veronika Ramey
+ */
 public class QueryAppointment {
+
+    /**Method to check appointments overlaps. Method is used to check for overlapping appointments.
+     *
+     * @param customerID Customer's ID
+     * @param startDate Appointment's starting date and time
+     * @param endDate Appointment's ending date and time
+     * @return ObservableList Overlapping appointments
+     * @throws SQLException
+     */
     public static ObservableList<Integer> checkforOverlaps(int customerID, String startDate, String endDate) throws SQLException {
         ObservableList <Integer> overlapID = FXCollections.observableArrayList();
         String sql = "SELECT Appointment_ID from APPOINTMENTS WHERE Customer_ID = ? AND (START BETWEEN ? AND ?) " +
@@ -35,6 +48,12 @@ public class QueryAppointment {
     }
 
 
+    /**Method selects all appointments. Method is used to select all existing appointments in the db.
+     *
+     * @return ObservableList List of appointments
+     * @throws SQLException
+     * @throws ParseException
+     */
     public static ObservableList selectAppointments() throws SQLException, ParseException {
         ObservableList<Appointment> appointments = FXCollections.observableArrayList();
         String sql = "SELECT Appointment_ID, Title, Description, Location, Type, Contact_ID, Start, End, Customer_ID, User_ID from  APPOINTMENTS";
@@ -55,23 +74,15 @@ public class QueryAppointment {
             int userID = rs.getInt("User_ID");
 
             ZoneId utcZoneId = ZoneId.of("UTC");
-
-
-
             ZoneId myZoneID = ZoneId.systemDefault();
-
             ZonedDateTime utcStartZDT = ZonedDateTime.ofInstant(startDateTime.toInstant(), utcZoneId);
             ZonedDateTime utcEndZDT = ZonedDateTime.ofInstant(endDateTime.toInstant(), utcZoneId);
-
             ZonedDateTime myStartDateTime = ZonedDateTime.ofInstant(utcStartZDT.toInstant(), myZoneID);
-
-
             ZonedDateTime myEndDateTime = ZonedDateTime.ofInstant(utcEndZDT.toInstant(), myZoneID);
             String startTime = String.valueOf(myStartDateTime.toLocalTime());
             String endTime = String.valueOf(myEndDateTime.toLocalTime());
             String startDate = String.valueOf(myStartDateTime.toLocalDate());
             String endDate = String.valueOf(myEndDateTime.toLocalDate());
-
             String formattedStartDateTime = startTime + " " + startDate;
             String formattedEndDateTime = endTime + " " + endDate;
 
@@ -83,9 +94,14 @@ public class QueryAppointment {
         }
         return appointments;
 
-
     }
 
+    /**Method to find appointment's type. Method is used to find appointment's tye for a specific appointment's id.
+     *
+     * @param appointmentID ID of appointment
+     * @return String Type of appointment
+     * @throws SQLException
+     */
     public static String appointmentType(int appointmentID) throws SQLException {
         String type = null;
 
@@ -102,6 +118,21 @@ public class QueryAppointment {
         return type;
     }
 
+    /**Method to update existing appointment in the db. Method is used to update existing record for appointment in the database.
+     *
+     * @param title Title of appointment
+     * @param description Description of appointment
+     * @param location Location of appointment
+     * @param type Type of appointment
+     * @param startDT Starting date and time of appointment
+     * @param endDT Ending date and time of appointment
+     * @param customerID Customer's ID
+     * @param userID User's ID
+     * @param contactID Contact's ID
+     * @param appointmentID ID of appointment
+     * @return int Number of records updated
+     * @throws SQLException
+     */
     public static int updateAppointment(String title, String description, String location, String type, String startDT, String endDT, int customerID, int userID, int contactID, int appointmentID) throws SQLException {
 
 
@@ -123,7 +154,22 @@ public class QueryAppointment {
         int rowsAffected = ps.executeUpdate();
         return rowsAffected;
     }
-    //add appointment to DB
+
+
+    /**Method is to insert new appointment to the DB. Method is used to add a new appointment's record to the database.
+     *
+     * @param title Title of appointment
+     * @param description Description of appointment
+     * @param location Location of appointment
+     * @param type Type of appointment
+     * @param startDateTime Start date and time of appointment
+     * @param endDateTime End date and time of appointment
+     * @param customerID Customer's ID
+     * @param userID User's ID
+     * @param contact Contact for the appointment
+     * @return int Number of records inserted
+     * @throws SQLException
+     */
     public static int insertAppointment  ( String title, String description,  String location, String type,
                                            String startDateTime, String endDateTime, int customerID, int userID, int contact )
             throws SQLException {
@@ -146,14 +192,16 @@ public class QueryAppointment {
         ps.setInt (12, userID);
         ps.setInt(13, contact);
 
-
-
         int rowsAffected = ps.executeUpdate();
         return rowsAffected;
-
-
     }
 
+    /**Method to delete appointment. Method is used to delete appointment from the database
+     *
+     * @param appointmentID ID of appointment to be deleted
+     * @return int Number of records deleted
+     * @throws SQLException
+     */
     public static int deleteAppointment(int appointmentID) throws SQLException {
 
         String sql = "DELETE FROM APPOINTMENTS WHERE Appointment_ID = ?";
@@ -164,7 +212,12 @@ public class QueryAppointment {
     }
 
 
-
+    /**Method to select appointments for a week. Method is used to select appointments for a week from the database.
+     *
+     * @return ObservableList List of appointments
+     * @throws SQLException
+     * @throws ParseException
+     */
     public static  ObservableList selectWeeklyAppointments() throws SQLException, ParseException {
         ObservableList<Appointment> appByWeek = FXCollections.observableArrayList();
         LocalDateTime myLDT = LocalDateTime.now();
@@ -202,16 +255,9 @@ public class QueryAppointment {
 
             ZoneId myZoneID = ZoneId.systemDefault();
 
-
             ZonedDateTime utcStartZDT = ZonedDateTime.ofInstant (startDateTime.toInstant(), utcZoneId);
             ZonedDateTime utcEndZDT = ZonedDateTime.ofInstant (endDateTime.toInstant(), utcZoneId);
-
             ZonedDateTime myStartDateTime = ZonedDateTime.ofInstant (utcStartZDT.toInstant(), myZoneID);
-
-            ZonedDateTime startToLocalInstat = utcStartZDT.withZoneSameInstant(myZoneID);
-
-            ZonedDateTime startLocal = startDateTime.toInstant().atZone(myZoneID);
-
             ZonedDateTime myEndDateTime = ZonedDateTime.ofInstant(utcEndZDT.toInstant(), myZoneID);
             String startTime = String.valueOf (myStartDateTime.toLocalTime());
             String endTime = String.valueOf (myEndDateTime.toLocalTime());
@@ -229,9 +275,14 @@ public class QueryAppointment {
         }
         return appByWeek;
 
-
     }
 
+    /**Method to select appointments for a month. Method is used to select appointments for a month from the database.
+     *
+     * @return ObservableList Appointments for the month
+     * @throws SQLException
+     * @throws ParseException
+     */
     public static ObservableList selectMonthlyAppointments() throws SQLException, ParseException {
         ObservableList<Appointment> appByMonth = FXCollections.observableArrayList();
         LocalDateTime myLDT = LocalDateTime.now();
@@ -295,8 +346,5 @@ public class QueryAppointment {
 
         }
         return appByMonth;
-
-
-
 
     }}
