@@ -164,16 +164,19 @@ try {
             ZonedDateTime utcStartZDT = Utility.convertUTCTime(startHour, startMinute, startdt);
             ZonedDateTime utcEndZDT = Utility.convertUTCTime (endHour, endMinute, enddt);
 
-            if ( Utility.validateBusinessHours(utcStartZDT, utcEndZDT)){
-                Utility.displayWarning(1);
-            }
 
-            else if (title.isEmpty() || description.isEmpty() || location.isEmpty() || type.isEmpty()
-            || customerTextfield.getText().isEmpty() || userIdTextfield.getText().isEmpty() || contactName == null  ) {
+            if (title.isEmpty() || description.isEmpty() || location.isEmpty() || type.isEmpty()
+            || customerTextfield.getText().isEmpty() || userIdTextfield.getText().isEmpty() || contactName == null ||
+             startdt == null || enddt ==null ||startHour.isEmpty() || endHour.isEmpty()) {
               Utility.displayErrorAlert(1);
             }
 
-            else if (utcStartZDT.isAfter(utcEndZDT)){
+         else if  ( Utility.validateBusinessHours(utcStartZDT, utcEndZDT)){
+            Utility.displayWarning(1);
+            }
+
+
+    else if (utcStartZDT.isAfter(utcEndZDT)){
                Utility.displayErrorAlert(2);
             }
 

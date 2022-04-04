@@ -323,13 +323,9 @@ public class QueryAppointment {
 
             ZonedDateTime utcStartZDT = ZonedDateTime.ofInstant (startDateTime.toInstant(), utcZoneId);
             ZonedDateTime utcEndZDT = ZonedDateTime.ofInstant (endDateTime.toInstant(), utcZoneId);
-            System.out.println (utcStartZDT + "utcStartZDT");
             ZonedDateTime myStartDateTime = ZonedDateTime.ofInstant (utcStartZDT.toInstant(), myZoneID);
-            System.out.println (myStartDateTime + "myStartDT");
             ZonedDateTime startToLocalInstat = utcStartZDT.withZoneSameInstant(myZoneID);
-            System.out.println (startToLocalInstat + "instant");
             ZonedDateTime startLocal = startDateTime.toInstant().atZone(myZoneID);
-            System.out.println (startLocal + "startLocal");
             ZonedDateTime myEndDateTime = ZonedDateTime.ofInstant(utcEndZDT.toInstant(), myZoneID);
             String startTime = String.valueOf (myStartDateTime.toLocalTime());
             String endTime = String.valueOf (myEndDateTime.toLocalTime());

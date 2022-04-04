@@ -116,12 +116,15 @@ public class UpdateAppointmentController implements Initializable {
             ZonedDateTime utcEndZDT = Utility.convertUTCTime (endHour, endMinute, enddt);
 
 
-                if (Utility.validateBusinessHours(utcStartZDT, utcEndZDT)){
-                    Utility.displayWarning(4);
-
-            } else if (title.isEmpty() || description.isEmpty() || location.isEmpty() || type.isEmpty()
-                    || customerUpdTextfield.getText().isEmpty() || userIdUpdTextfield.getText().isEmpty() || contactName == null  ) {
+             if (title.isEmpty() || description.isEmpty() || location.isEmpty() || type.isEmpty()
+                    || customerUpdTextfield.getText().isEmpty() || userIdUpdTextfield.getText().isEmpty() || contactName == null ||
+            startdt == null || enddt ==null ||startHour.isEmpty() || endHour.isEmpty()) {
                 Utility.displayErrorAlert(1);
+
+            }
+
+            else if (Utility.validateBusinessHours(utcStartZDT, utcEndZDT)){
+                Utility.displayWarning(4);
 
             }
             else if (Query.customerExists(customerID)){

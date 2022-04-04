@@ -1,5 +1,6 @@
-package sample.Model;
+package sample.helper;
 
+import sample.Model.User;
 import sample.helper.JDBC;
 
 import java.sql.PreparedStatement;

@@ -11,7 +11,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
-import sample.Model.UserLogged;
+import sample.helper.UserLogged;
 import sample.helper.JDBC;
  import java.io.File;
 import java.io.FileWriter;
